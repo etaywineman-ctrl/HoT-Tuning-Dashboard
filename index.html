@@ -8,6 +8,7 @@
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-is@18/umd/react-is.production.min.js"></script>
     
     <!-- Babel to translate JSX in the browser -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -17,7 +18,7 @@
     
     <!-- Recharts and its dependencies -->
     <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 </head>
 <body class="bg-slate-50">
     <div id="root"></div>
@@ -175,18 +176,14 @@
                         formatter={(value) => <span className="text-slate-700 font-medium ml-1">{value === (breakdownMetric === 'wmape' ? 'initialWmape' : 'initialBias') ? 'Initial' : 'Post Tuning'}</span>}
                       />
                       
-                      {breakdownMetric === 'wmape' ? (
-                        [
-                          <Bar key="initialWmape" dataKey="initialWmape" name="initialWmape" fill="#94a3b8" radius={[0, 4, 4, 0]} />,
-                          <Bar key="postWmape" dataKey="postWmape" name="postWmape" fill="#4f46e5" radius={[0, 4, 4, 0]} />
-                        ]
-                      ) : (
-                        [
-                          <ReferenceLine key="ref" x={0} stroke="#94a3b8" />,
-                          <Bar key="initialBias" dataKey="initialBias" name="initialBias" fill="#94a3b8" radius={[0, 4, 4, 0]} />,
-                          <Bar key="postBias" dataKey="postBias" name="postBias" fill="#10b981" radius={[0, 4, 4, 0]} />
-                        ]
-                      )}
+                      {/* Fixed Conditional Rendering Logic */}
+                      {breakdownMetric === 'wmape' && <Bar dataKey="initialWmape" name="initialWmape" fill="#94a3b8" radius={[0, 4, 4, 0]} />}
+                      {breakdownMetric === 'wmape' && <Bar dataKey="postWmape" name="postWmape" fill="#4f46e5" radius={[0, 4, 4, 0]} />}
+
+                      {breakdownMetric !== 'wmape' && <ReferenceLine x={0} stroke="#94a3b8" />}
+                      {breakdownMetric !== 'wmape' && <Bar dataKey="initialBias" name="initialBias" fill="#94a3b8" radius={[0, 4, 4, 0]} />}
+                      {breakdownMetric !== 'wmape' && <Bar dataKey="postBias" name="postBias" fill="#10b981" radius={[0, 4, 4, 0]} />}
+                      
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
