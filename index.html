@@ -6,27 +6,29 @@
     <title>Entity Breakdown Dashboard</title>
     
     <!-- Polyfill to prevent environment variable errors in the browser -->
-    <script>window.process = { env: { NODE_ENV: 'production' } };</script>
+    <script>window.process = { env: { NODE_ENV: 'production' } }; window.global = window;</script>
 
-    <!-- React 18 & Dependencies -->
+    <!-- 1. React 18 & Core Dependencies -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- 2. Recharts Dependencies -->
     <script crossorigin src="https://unpkg.com/react-is@18.2.0/umd/react-is.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
     
-    <!-- Babel for JSX Translation -->
+    <!-- 3. Recharts (Must load BEFORE Babel to prevent UMD environment conflicts) -->
+    <script crossorigin src="https://unpkg.com/recharts@2.1.9/umd/Recharts.min.js"></script>
+    
+    <!-- 4. Babel for JSX Translation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Tailwind CSS -->
+    <!-- 5. Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Recharts (Stable 2.12.7 Build) -->
-    <script crossorigin src="https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js"></script>
     
     <!-- Error Catcher to prevent silent blank pages -->
     <script>
         window.addEventListener('error', function(e) {
-            document.body.innerHTML += '<div style="color:red; padding: 20px; background: #fee2e2; border-bottom: 2px solid #ef4444; position: fixed; top: 0; left: 0; right: 0; z-index: 9999;"><strong>Fatal Error:</strong> ' + e.message + '<br><small>Check the browser console (F12) for more details.</small></div>';
+            document.body.innerHTML += '<div style="color:red; padding: 20px; background: #fee2e2; border-bottom: 2px solid #ef4444; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; font-family: sans-serif;"><strong>Fatal Error:</strong> ' + e.message + '<br><small>Check the browser console (F12) for more details.</small></div>';
         });
     </script>
 </head>
@@ -34,6 +36,10 @@
     <div id="root"></div>
 
     <script type="text/babel">
+        // Failsafe checks
+        if (!window.React) throw new Error("React failed to load from CDN.");
+        if (!window.Recharts) throw new Error("Recharts failed to load globally. Script order or CDN issue.");
+
         const { useState } = window.React;
         const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = window.Recharts;
 
