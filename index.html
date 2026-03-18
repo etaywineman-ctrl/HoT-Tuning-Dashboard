@@ -22,9 +22,18 @@
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
+            background-position: right 0.75rem center;
             background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
+            background-size: 1.25em 1.25em;
+        }
+
+        /* Toggle switch styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4f46e5;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4f46e5;
         }
     </style>
 </head>
@@ -36,11 +45,6 @@
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Low Variability Steady</h1>
                 <p class="text-slate-500 font-medium mt-1">Tuning Project Performance Dashboard</p>
-            </div>
-            <div class="mt-4 md:mt-0 flex space-x-2">
-                <span class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm">
-                    Final Stage: Post TooFew
-                </span>
             </div>
         </div>
 
@@ -59,22 +63,45 @@
         <!-- ========================================== -->
         <div id="tabContent-entity" class="flex flex-col space-y-4 animate-fade-in block">
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <div class="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-slate-100">
-                    <div>
+                <div class="flex flex-col xl:flex-row xl:items-end justify-between pb-6 border-b border-slate-100 gap-4">
+                    <div class="flex-1">
                         <div class="flex items-center gap-3 mb-1">
                             <h2 class="text-xl font-bold text-slate-800">Entity Breakdown</h2>
                             <span class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider">Low Variability Steady</span>
                         </div>
-                        <p class="text-slate-500 text-sm mt-1">Granular analysis of Pre vs Post Tuning accuracy changes across specific entities within this project (Ordered by weight).</p>
+                        <p class="text-slate-500 text-sm mt-1">Granular analysis of Pre vs Post Tuning accuracy changes across specific entities (Ordered by weight).</p>
+                        <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-md mt-3 inline-block font-medium">
+                            <strong class="font-bold">Note:</strong> This breakdown displays the top 20 entities and does not represent the entire dataset.
+                        </p>
                     </div>
                     
-                    <div class="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
-                        <select id="categorySelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-10 font-medium shadow-sm outline-none transition-all">
+                    <div class="flex flex-col sm:flex-row flex-wrap items-end gap-3 mt-2 xl:mt-0">
+                        <!-- Data Labels Toggle -->
+                        <div class="flex items-center mb-2 sm:mb-0 mr-2">
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="toggle" id="toggleLabels" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-slate-300 appearance-none cursor-pointer transition-all duration-200 z-10 top-0 left-0"/>
+                                <label for="toggleLabels" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                            </div>
+                            <label for="toggleLabels" class="text-sm font-medium text-slate-700 cursor-pointer">Data Labels</label>
+                        </div>
+
+                        <!-- Entity Filter Dropdown -->
+                        <div id="entityFilterContainer" class="relative inline-block w-full sm:w-56">
+                            <button id="entityFilterBtn" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 block p-2.5 shadow-sm outline-none transition-all flex justify-between items-center font-medium">
+                                <span class="truncate">Filter Entities...</span>
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="entityFilterDropdown" class="hidden absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto p-1.5 right-0">
+                                <!-- Checkboxes injected here -->
+                            </div>
+                        </div>
+
+                        <select id="categorySelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-medium shadow-sm outline-none transition-all w-full sm:w-48">
                             <option value="lob">Line Of Business</option>
                             <option value="customer">HOT Customer Group</option>
                             <option value="org">Organization</option>
                         </select>
-                        <select id="metricSelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-10 font-medium shadow-sm outline-none transition-all">
+                        <select id="metricSelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-medium shadow-sm outline-none transition-all w-full sm:w-40">
                             <option value="wmape">WMAPE (%)</option>
                             <option value="accuracy">Accuracy (%)</option>
                             <option value="bias">Bias (%)</option>
@@ -271,15 +298,77 @@
           { name: 'HO LA LOB', initialWmape: 91.92, postWmape: 110.58, initialBias: -220.53, postBias: -275.38 },
         ];
 
+        // --- FILTER STATE ---
+        let activeFilters = new Set(); // Stores names of checked entities
+
         // --- DYNAMIC CALCULATIONS ---
-        // Dynamically compute the Accuracy (100 - WMAPE) for all datasets
-        globalData.forEach(d => d.accuracy = Number((100 - d.wmape).toFixed(2)));
+        function clamp(val, min, max) {
+            return Math.min(Math.max(val, min), max);
+        }
+
+        // Global Accuracy
+        globalData.forEach(d => {
+            d.accuracy = clamp(Number((100 - d.wmape).toFixed(2)), 0, 100);
+        });
         
+        // Entity Breakdown Accuracy & Bias limits
         [orgData, customerData, lobData].forEach(dataset => {
             dataset.forEach(d => {
-                d.initialAccuracy = Number((100 - d.initialWmape).toFixed(2));
-                d.postAccuracy = Number((100 - d.postWmape).toFixed(2));
+                // Keep Bias between -100 and 100
+                d.initialBias = clamp(d.initialBias, -100, 100);
+                d.postBias = clamp(d.postBias, -100, 100);
+
+                // Calculate Accuracy (100 - WMAPE) and keep between 0 and 100
+                d.initialAccuracy = clamp(Number((100 - d.initialWmape).toFixed(2)), 0, 100);
+                d.postAccuracy = clamp(Number((100 - d.postWmape).toFixed(2)), 0, 100);
             });
+        });
+
+        // ==========================================
+        // FILTER DROPDOWN LOGIC
+        // ==========================================
+        function populateFilterDropdown(category) {
+            let data = [];
+            if (category === 'lob') data = lobData;
+            if (category === 'customer') data = customerData;
+            if (category === 'org') data = orgData;
+
+            const dropdown = document.getElementById('entityFilterDropdown');
+            dropdown.innerHTML = '';
+            activeFilters.clear();
+
+            data.forEach((d, index) => {
+                activeFilters.add(d.name); // Default all to checked
+
+                const div = document.createElement('div');
+                div.className = 'flex items-center p-2 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors';
+                div.innerHTML = `
+                    <input type="checkbox" id="filter-${index}" value="${d.name}" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                    <label for="filter-${index}" class="ml-2.5 text-sm font-medium text-slate-700 cursor-pointer w-full truncate" title="${d.name}">${d.name}</label>
+                `;
+                
+                const checkbox = div.querySelector('input');
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) activeFilters.add(e.target.value);
+                    else activeFilters.delete(e.target.value);
+                    updateBarChart(); // Re-render chart on filter change
+                });
+                
+                dropdown.appendChild(div);
+            });
+        }
+
+        // Toggle Filter Dropdown Visibility
+        document.getElementById('entityFilterBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('entityFilterDropdown').classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#entityFilterContainer')) {
+                document.getElementById('entityFilterDropdown').classList.add('hidden');
+            }
         });
 
         // ==========================================
@@ -309,25 +398,29 @@
         let barChartInstance = null;
         let lineChartInstance = null;
 
-        // Common Chart Options
         Chart.defaults.font.family = "'Inter', sans-serif";
         Chart.defaults.color = '#64748b';
 
         // --- 1. Bar Chart (Entity Breakdown) ---
-        function getActiveBarData(category, metric) {
+        function getActiveBarData(category) {
             let data = [];
             if (category === 'lob') data = lobData;
             if (category === 'customer') data = customerData;
             if (category === 'org') data = orgData;
 
-            // Deep copy to avoid mutating original arrays, preserving their initial ordered state (by weight)
-            return JSON.parse(JSON.stringify(data));
+            // Deep copy to avoid mutating original arrays
+            let copy = JSON.parse(JSON.stringify(data));
+            
+            // Filter by active checkboxes but keep ORIGINAL order
+            return copy.filter(d => activeFilters.has(d.name));
         }
 
         function updateBarChart() {
             const category = document.getElementById('categorySelect').value;
             const metric = document.getElementById('metricSelect').value;
-            const data = getActiveBarData(category, metric);
+            const showLabels = document.getElementById('toggleLabels').checked;
+            
+            const data = getActiveBarData(category);
 
             const labels = data.map(d => d.name);
             let datasets = [];
@@ -359,8 +452,18 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: { right: showLabels ? 40 : 0 } // Add padding if labels are shown so they don't clip
+                    },
                     plugins: {
-                        datalabels: { display: false }, // Turn off data labels for bar chart
+                        datalabels: { 
+                            display: showLabels,
+                            align: 'right',
+                            anchor: 'end',
+                            formatter: (val) => val + '%',
+                            font: { weight: 'bold', size: 11 },
+                            color: '#475569'
+                        },
                         legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { weight: '600' } } },
                         tooltip: { backgroundColor: '#1e293b', titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' }, padding: 12, cornerRadius: 8 }
                     },
@@ -431,18 +534,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: { top: 30 } }, // Space for datalabels
+                    layout: { padding: { top: 30 } },
                     plugins: {
                         legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { weight: '600', size: 13 } } },
                         tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 8, titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' } },
                         datalabels: {
                             font: { weight: 'bold', size: 12 },
                             formatter: function(value) { return value.toFixed(2) + '%'; },
-                            align: function(context) { 
-                                // To avoid overlapping, position WMAPE labels above the dot, and Accuracy/Bias labels below
-                                if(context.datasetIndex === 0) return 'top';
-                                return 'bottom';
-                            },
+                            align: function(context) { return context.datasetIndex === 0 ? 'top' : 'bottom'; },
                             offset: 6,
                             color: function(context) { return context.dataset.borderColor; }
                         }
@@ -458,13 +557,13 @@
                         yAccuracy: {
                             type: 'linear', display: true, position: 'left',
                             title: { display: true, text: 'Accuracy', font: { weight: 'bold' }, color: '#0ea5e9' },
-                            grid: { drawOnChartArea: false }, // Prevent overlapping grid lines
+                            grid: { drawOnChartArea: false },
                             suggestedMin: 32, suggestedMax: 42
                         },
                         yBias: {
                             type: 'linear', display: true, position: 'right',
                             title: { display: true, text: 'Bias', font: { weight: 'bold' }, color: '#10b981' },
-                            grid: { drawOnChartArea: false }, // Prevent gridline overlap
+                            grid: { drawOnChartArea: false },
                             suggestedMin: -25, suggestedMax: 0
                         }
                     }
@@ -474,13 +573,17 @@
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
+            populateFilterDropdown(document.getElementById('categorySelect').value);
             updateBarChart();
-            // line chart is drawn when its tab is clicked to prevent sizing bugs
         });
 
         // Event Listeners for Bar Chart filters
-        document.getElementById('categorySelect').addEventListener('change', updateBarChart);
+        document.getElementById('categorySelect').addEventListener('change', (e) => {
+            populateFilterDropdown(e.target.value);
+            updateBarChart();
+        });
         document.getElementById('metricSelect').addEventListener('change', updateBarChart);
+        document.getElementById('toggleLabels').addEventListener('change', updateBarChart);
 
     </script>
 </body>
