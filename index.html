@@ -116,12 +116,12 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- TAB 2: GLOBAL PROGRESSION -->
+        <!-- TAB 2: LOW VARIABILITY STEADY -->
         <!-- ========================================== -->
         <div id="tabContent-global" class="flex flex-col space-y-6 hidden">
             
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Row 1: KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- WMAPE Card -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-10">
@@ -166,20 +166,145 @@
                         8.45% Closer to Zero
                     </div>
                 </div>
+            </div>
 
-                <!-- Parameters Card -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10">
-                        <svg class="w-16 h-16 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <!-- Row 2: Parameters and Configurations -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Detailed Parameters Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 relative">
+                    <div class="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                        <div class="absolute top-0 right-0 p-4 opacity-5">
+                            <svg class="w-32 h-32 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
                     </div>
-                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Key Parameters</p>
-                    <div class="grid grid-cols-2 gap-y-2">
-                        <div class="font-medium text-slate-500">MRD:</div>
-                        <div class="font-bold text-slate-900">1.4</div>
-                        <div class="font-medium text-slate-500">Outlier%:</div>
-                        <div class="font-bold text-slate-900">10</div>
-                        <div class="font-medium text-slate-500">TooFew:</div>
-                        <div class="font-bold text-slate-900">4</div>
+                    <div class="p-6 md:p-8 relative z-10">
+                        <h2 class="text-lg font-bold text-slate-800 mb-5">Key Parameters Tuning <span class="text-slate-400 text-sm font-normal ml-2">(Hover for info)</span></h2>
+                        <div class="flex flex-col space-y-1">
+                            
+                            <!-- Param 1 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">MeanRelativeDistance</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">0.6</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">1.4</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Controls the sensitivity of fit validation. Models with MAPE greater than the specified value are rejected. The smaller the value, the stricter the validation.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 2 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">ForecastMeanRelativeDistance</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">5</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">3.5</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Specifies the sensitivity of forecast validation. The smaller the value, the stricter the test.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 3 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">Outlier%</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">20</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">10</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    A set of points, suspicious as outlying, will be regarded as such only if its size does not exceed this given percentage of data.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 4 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">TooFew</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">2</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">4</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Minimum amount of non-zero data for which it would be considered model-feasible.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 5 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">Quantile</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">2.5</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">4</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Specifies the sensitivity of outlier detection. The greater this value, the less sensitive (more liberal) the detection of outliers.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 6 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">test_samp_len</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">6</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">12</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Length of data for forecast validation.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Param 7 -->
+                            <div class="group relative flex justify-between items-center cursor-help p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-100 last:border-0">
+                                <div class="font-medium text-slate-700 text-sm border-b border-dashed border-slate-400 pb-0.5">TestPeriod</div>
+                                <div class="flex items-center text-sm font-semibold">
+                                    <span class="text-slate-400 line-through mr-2">6</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    <span class="text-indigo-600">12</span>
+                                </div>
+                                <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl pointer-events-none text-center leading-relaxed">
+                                    Length of test period for fit validation.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Configurations -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4">Model Configuration Changes</h2>
+                    <div class="flex flex-col gap-4 flex-grow">
+                        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 flex-1">
+                            <div class="flex items-center mb-3">
+                                <svg class="w-5 h-5 text-emerald-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <h3 class="font-bold text-emerald-900">Enabled Models</h3>
+                            </div>
+                            <div class="text-emerald-800 bg-emerald-100/70 px-3 py-1.5 rounded-lg font-semibold w-fit border border-emerald-200">ARX</div>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-100 rounded-xl p-5 flex-1">
+                            <div class="flex items-center mb-3">
+                                <svg class="w-5 h-5 text-rose-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <h3 class="font-bold text-rose-900">Disabled Models</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">ARLOGISTIC</div>
+                                <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">BWINT</div>
+                                <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">LOGISTIC</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -187,35 +312,10 @@
             <!-- Line Chart Section -->
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
                 <div class="pb-6 border-b border-slate-100">
-                    <h2 class="text-xl font-bold text-slate-800">Overall Accuracy Progression Over Stages</h2>
+                    <h2 class="text-xl font-bold text-slate-800">Low Variability Steady: Accuracy Progression</h2>
                 </div>
                 <div class="line-chart-container pt-6">
                     <canvas id="lineChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Configurations -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">Model Configuration Changes</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5">
-                        <div class="flex items-center mb-3">
-                            <svg class="w-5 h-5 text-emerald-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <h3 class="font-bold text-emerald-900">Enabled Models</h3>
-                        </div>
-                        <div class="text-emerald-800 bg-emerald-100/70 px-3 py-1.5 rounded-lg font-semibold w-fit border border-emerald-200">ARX</div>
-                    </div>
-                    <div class="bg-rose-50 border border-rose-100 rounded-xl p-5">
-                        <div class="flex items-center mb-3">
-                            <svg class="w-5 h-5 text-rose-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <h3 class="font-bold text-rose-900">Disabled Models</h3>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">ARLOGISTIC</div>
-                            <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">BWINT</div>
-                            <div class="text-rose-800 bg-rose-100/70 px-3 py-1.5 rounded-lg font-semibold border border-rose-200">LOGISTIC</div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -299,7 +399,7 @@
         ];
 
         // --- FILTER STATE ---
-        let activeFilters = new Set(); // Stores names of checked entities
+        let activeFilters = new Set(); 
 
         // --- DYNAMIC CALCULATIONS ---
         function clamp(val, min, max) {
@@ -311,7 +411,6 @@
             d.accuracy = clamp(Number((100 - d.wmape).toFixed(2)), 0, 100);
         });
         
-        // Entity Breakdown Accuracy & Bias limits
         [orgData, customerData, lobData].forEach(dataset => {
             dataset.forEach(d => {
                 // Keep Bias between -100 and 100
@@ -351,14 +450,14 @@
                 checkbox.addEventListener('change', (e) => {
                     if (e.target.checked) activeFilters.add(e.target.value);
                     else activeFilters.delete(e.target.value);
-                    updateBarChart(); // Re-render chart on filter change
+                    updateBarChart();
                 });
                 
                 dropdown.appendChild(div);
             });
         }
 
-        // Toggle Filter Dropdown Visibility
+        // Toggle Filter Dropdown
         document.getElementById('entityFilterBtn').addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('entityFilterDropdown').classList.toggle('hidden');
@@ -401,17 +500,13 @@
         Chart.defaults.font.family = "'Inter', sans-serif";
         Chart.defaults.color = '#64748b';
 
-        // --- 1. Bar Chart (Entity Breakdown) ---
         function getActiveBarData(category) {
             let data = [];
             if (category === 'lob') data = lobData;
             if (category === 'customer') data = customerData;
             if (category === 'org') data = orgData;
 
-            // Deep copy to avoid mutating original arrays
             let copy = JSON.parse(JSON.stringify(data));
-            
-            // Filter by active checkboxes but keep ORIGINAL order
             return copy.filter(d => activeFilters.has(d.name));
         }
 
@@ -453,7 +548,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     layout: {
-                        padding: { right: showLabels ? 40 : 0 } // Add padding if labels are shown so they don't clip
+                        padding: { right: showLabels ? 40 : 0 } 
                     },
                     plugins: {
                         datalabels: { 
@@ -541,7 +636,11 @@
                         datalabels: {
                             font: { weight: 'bold', size: 12 },
                             formatter: function(value) { return value.toFixed(2) + '%'; },
-                            align: function(context) { return context.datasetIndex === 0 ? 'top' : 'bottom'; },
+                            align: function(context) { 
+                                // Position WMAPE labels above the dot, and Accuracy/Bias labels below to prevent overlap
+                                if(context.datasetIndex === 0) return 'top';
+                                return 'bottom';
+                            },
                             offset: 6,
                             color: function(context) { return context.dataset.borderColor; }
                         }
