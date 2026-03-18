@@ -65,7 +65,7 @@
                             <h2 class="text-xl font-bold text-slate-800">Entity Breakdown</h2>
                             <span class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider">Low Variability Steady</span>
                         </div>
-                        <p class="text-slate-500 text-sm mt-1">Granular analysis of Pre vs Post Tuning accuracy changes across specific entities within this project.</p>
+                        <p class="text-slate-500 text-sm mt-1">Granular analysis of Pre vs Post Tuning accuracy changes across specific entities within this project (Ordered by weight).</p>
                     </div>
                     
                     <div class="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
@@ -320,20 +320,8 @@
             if (category === 'customer') data = customerData;
             if (category === 'org') data = orgData;
 
-            let sortedData = JSON.parse(JSON.stringify(data));
-            sortedData.sort((a, b) => {
-                if (metric === 'wmape') {
-                   // Smaller WMAPE is better
-                   return (b.initialWmape - b.postWmape) - (a.initialWmape - a.postWmape);
-                } else if (metric === 'accuracy') {
-                   // Larger Accuracy is better
-                   return (b.postAccuracy - b.initialAccuracy) - (a.postAccuracy - a.initialAccuracy);
-                } else {
-                   // Bias closer to 0 is better
-                   return (Math.abs(b.initialBias) - Math.abs(b.postBias)) - (Math.abs(a.initialBias) - Math.abs(a.postBias));
-                }
-            });
-            return sortedData;
+            // Deep copy to avoid mutating original arrays, preserving their initial ordered state (by weight)
+            return JSON.parse(JSON.stringify(data));
         }
 
         function updateBarChart() {
