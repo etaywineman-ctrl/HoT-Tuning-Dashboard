@@ -396,7 +396,52 @@
                     </div>
                 </div>
 
-                <div class="chart-container pt-6">
+                <!-- NEW CLICKABLE KPI HEADER -->
+                <div class="mt-6 mb-4 bg-slate-50 p-5 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition-all shadow-sm group" onclick="toggleMonthlyGlobalMetric()" title="Click to toggle between WMAPE and Accuracy">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                        <h3 class="text-md font-bold text-slate-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-500 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                            <span id="mg-titleText">Global Monthly WMAPE (%)</span>
+                        </h3>
+                        <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md group-hover:bg-indigo-100 transition-colors flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            Click to swap
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 text-center">
+                        <div class="md:border-r border-slate-200 px-2">
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Overall</p>
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-slate-400 line-through text-xs font-medium" id="mg-overall-init">--%</span>
+                                <span class="text-indigo-600 font-extrabold text-xl md:text-2xl" id="mg-overall-post">--%</span>
+                            </div>
+                        </div>
+                        <div class="md:border-r border-slate-200 px-2">
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">September</p>
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-slate-400 line-through text-xs font-medium" id="mg-m9-init">--%</span>
+                                <span class="text-indigo-600 font-extrabold text-xl md:text-2xl" id="mg-m9-post">--%</span>
+                            </div>
+                        </div>
+                        <div class="md:border-r border-slate-200 px-2">
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">October</p>
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-slate-400 line-through text-xs font-medium" id="mg-m10-init">--%</span>
+                                <span class="text-indigo-600 font-extrabold text-xl md:text-2xl" id="mg-m10-post">--%</span>
+                            </div>
+                        </div>
+                        <div class="px-2">
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">November</p>
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-slate-400 line-through text-xs font-medium" id="mg-m11-init">--%</span>
+                                <span class="text-indigo-600 font-extrabold text-xl md:text-2xl" id="mg-m11-post">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container pt-6 border-t border-slate-100">
                     <canvas id="monthlyBarChart"></canvas>
                 </div>
             </div>
@@ -409,7 +454,7 @@
         Chart.register(ChartDataLabels);
 
         // ==========================================
-        // DATA SOURCES (WEIGHT-BASED MASTER LISTS)
+        // BAKED DATA SOURCES (WEIGHT-BASED MASTER LISTS)
         // ==========================================
         const globalData = [
           { stage: 'Pre Tuning', wmape: 64.68, bias: -13.82 },
@@ -421,74 +466,118 @@
           { stage: 'Post TooFew', wmape: 59.59, bias: -5.37 },
         ];
 
+        // ==========================================
+        // MONTHLY GLOBAL KPI HEADER DATA
+        // ==========================================
+        // REPLACE THESE PLACEHOLDER NUMBERS WITH THE EXACT WMAPE VALUES FROM YOUR UPLOADED IMAGE
+        const monthlyGlobalMetrics = {
+            overall: { initialWmape: 86.32, postWmape: 49.34 },
+            m9: { initialWmape: 56.38, postWmape: 53.6 }, // <-- Replace 65.00 and 60.00
+            m10: { initialWmape: 63.53, postWmape: 57.08 }, // <-- Replace 63.00 and 58.00
+            m11: { initialWmape: 61.25, postWmape: 56.78 }  // <-- Replace 66.00 and 61.00
+        };
+
         const orgData = [
-          { name: 'PRD:OXT:OXT - OXO International Ltd.', initialWmape: 2.37, postWmape: 1.95, initialBias: -6.91, postBias: 6.56 },
-          { name: 'PRD:KMS:KMS - Kaz USA', initialWmape: 13.37, postWmape: 11.53, initialBias: 21.74, postBias: 24.94 },
-          { name: 'PRD:KTN:KTN - Kaz Switzerland', initialWmape: 4.18, postWmape: 6.93, initialBias: 17.51, postBias: 18.15 },
-          { name: 'PRD:HOB:Helen of Troy – Olive Branch DC', initialWmape: 11.79, postWmape: 14.63, initialBias: -1.75, postBias: 9.30 },
-          { name: 'PRD:HFT:HFT-Hydro Flask Arlington.', initialWmape: 15.53, postWmape: 18.29, initialBias: 17.17, postBias: 13.61 },
-          { name: 'PRD:JUK:HOT (UK) Limited (JUK)', initialWmape: 21.31, postWmape: 29.86, initialBias: 37.70, postBias: 40.22 },
-          { name: 'PRD:COB:COB - Curlsmith Olive Branch', initialWmape: 217.50, postWmape: 33.34, initialBias: 15.54, postBias: 18.90 },
-          { name: 'PRD:JHM:JHM - Jiaxing Warehouse', initialWmape: 55.87, postWmape: 5.98, initialBias: -55.56, postBias: -46.55 },
-          { name: 'PRD:DOB:DOB - Drybar USA', initialWmape: 42.85, postWmape: 29.85, initialBias: -16.39, postBias: -9.86 },
-          { name: 'PRD:KCN:KCN - Kaz Metro Canada', initialWmape: 14.75, postWmape: 8.82, initialBias: -22.59, postBias: -16.67 },
-          { name: 'PRD:OOB:OOB - Osprey Olive Branch', initialWmape: 42.43, postWmape: 35.67, initialBias: -13.62, postBias: -15.78 },
-          { name: 'PRD:HMZ:HMZ - Helen of Troy Mexico - Zimag', initialWmape: 24.39, postWmape: 27.24, initialBias: 23.90, postBias: 30.13 },
-          { name: 'PRD:OKT:OKT - Osprey KTN', initialWmape: 52.36, postWmape: 52.26, initialBias: -87.01, postBias: -77.82 },
-          { name: 'PRD:HFC:HFC - Hydro Flask Metro Canada', initialWmape: 77.27, postWmape: 85.42, initialBias: -50.35, postBias: -52.68 },
-          { name: 'PRD:HCN:Helen of Troy L.P. (Texas L.P) Canada', initialWmape: 8.68, postWmape: 11.47, initialBias: 5.30, postBias: 6.68 },
-          { name: 'PRD:OGB:OGB - Osprey Great Bear', initialWmape: 28.25, postWmape: 37.78, initialBias: 5.53, postBias: 8.02 },
-          { name: 'PRD:KEC:KEC - Kaz Switzerland', initialWmape: 3.76, postWmape: 20.16, initialBias: -0.84, postBias: -5.77 },
-          { name: 'PRD:CMC:CMC - Curlsmith Metro Canada', initialWmape: 77.08, postWmape: 82.89, initialBias: 98.28, postBias: 98.37 },
-          { name: 'PRD:OMC:OMC - Osprey Metro Canada', initialWmape: 72.15, postWmape: 56.50, initialBias: -44.46, postBias: -27.73 },
-          { name: 'PRD:SZX:Helen of Troy SZX Warehouse', initialWmape: 0, postWmape: 0, initialBias: 0, postBias: 0 }
+          { name: 'PRD:OXT:OXT - OXO International Ltd.', initialWmape: 2.37, postWmape: 1.95, initialBias: -6.91, postBias: 6.56, m9_initialWmape: 0.05, m9_postWmape: 3.36, m10_initialWmape: 4.02, m10_postWmape: 2.22, m11_initialWmape: 2.66, m11_postWmape: 0.45 },
+          { name: 'PRD:KMS:KMS - Kaz USA', initialWmape: 13.37, postWmape: 11.53, initialBias: 21.74, postBias: 24.94, m9_initialWmape: 4.89, m9_postWmape: 10.00, m10_initialWmape: 28.08, m10_postWmape: 8.55, m11_initialWmape: 9.16, m11_postWmape: 15.40 },
+          { name: 'PRD:KTN:KTN - Kaz Switzerland', initialWmape: 4.18, postWmape: 6.93, initialBias: 17.51, postBias: 18.15, m9_initialWmape: 2.19, m9_postWmape: 6.06, m10_initialWmape: 4.82, m10_postWmape: 6.11, m11_initialWmape: 5.16, m11_postWmape: 8.41 },
+          { name: 'PRD:HOB:Helen of Troy – Olive Branch DC', initialWmape: 11.79, postWmape: 14.63, initialBias: -1.75, postBias: 9.30, m9_initialWmape: 1.04, m9_postWmape: 0.85, m10_initialWmape: 24.54, m10_postWmape: 29.36, m11_initialWmape: 5.06, m11_postWmape: 7.91 },
+          { name: 'PRD:HFT:HFT-Hydro Flask Arlington.', initialWmape: 15.53, postWmape: 18.29, initialBias: 17.17, postBias: 13.61, m9_initialWmape: 27.95, m9_postWmape: 30.12, m10_initialWmape: 14.74, m10_postWmape: 12.12, m11_initialWmape: 4.95, m11_postWmape: 14.16 },
+          { name: 'PRD:JUK:HOT (UK) Limited (JUK)', initialWmape: 21.31, postWmape: 29.86, initialBias: 37.70, postBias: 40.22, m9_initialWmape: 7.20, m9_postWmape: 2.16, m10_initialWmape: 24.62, m10_postWmape: 35.42, m11_initialWmape: 25.56, m11_postWmape: 39.08 },
+          { name: 'PRD:COB:COB - Curlsmith Olive Branch', initialWmape: 100, postWmape: 33.34, initialBias: 15.54, postBias: 18.90, m9_initialWmape: 58.96, m9_postWmape: 43.12, m10_initialWmape: 100, m10_postWmape: 66.43, m11_initialWmape: 0.55, m11_postWmape: 3.12 },
+          { name: 'PRD:JHM:JHM - Jiaxing Warehouse', initialWmape: 55.87, postWmape: 5.98, initialBias: -55.56, postBias: -46.55, m9_initialWmape: 42.92, m9_postWmape: 2.24, m10_initialWmape: 74.28, m10_postWmape: 8.59, m11_initialWmape: 52.23, m11_postWmape: 7.37 },
+          { name: 'PRD:DOB:DOB - Drybar USA', initialWmape: 42.85, postWmape: 29.85, initialBias: -16.39, postBias: -9.86, m9_initialWmape: 63.05, m9_postWmape: 62.33, m10_initialWmape: 44.30, m10_postWmape: 26.20, m11_initialWmape: 26.99, m11_postWmape: 9.50 },
+          { name: 'PRD:KCN:KCN - Kaz Metro Canada', initialWmape: 14.75, postWmape: 8.82, initialBias: -22.59, postBias: -16.67, m9_initialWmape: 16.11, m9_postWmape: 9.18, m10_initialWmape: 12.83, m10_postWmape: 9.66, m11_initialWmape: 15.91, m11_postWmape: 7.54 },
+          { name: 'PRD:OOB:OOB - Osprey Olive Branch', initialWmape: 42.43, postWmape: 35.67, initialBias: -13.62, postBias: -15.78, m9_initialWmape: 41.73, m9_postWmape: 33.39, m10_initialWmape: 66.67, m10_postWmape: 60.60, m11_initialWmape: 23.21, m11_postWmape: 17.39 },
+          { name: 'PRD:HMZ:HMZ - Helen of Troy Mexico - Zimag', initialWmape: 24.39, postWmape: 27.24, initialBias: 23.90, postBias: 30.13, m9_initialWmape: 44.00, m9_postWmape: 45.94, m10_initialWmape: 13.83, m10_postWmape: 10.00, m11_initialWmape: 4.63, m11_postWmape: 14.03 },
+          { name: 'PRD:OKT:OKT - Osprey KTN', initialWmape: 52.36, postWmape: 52.26, initialBias: -87.01, postBias: -77.82, m9_initialWmape: 22.25, m9_postWmape: 16.47, m10_initialWmape: 48.20, m10_postWmape: 66.82, m11_initialWmape: 100, m11_postWmape: 91.46 },
+          { name: 'PRD:HFC:HFC - Hydro Flask Metro Canada', initialWmape: 77.27, postWmape: 85.42, initialBias: -50.35, postBias: -52.68, m9_initialWmape: 40.55, m9_postWmape: 66.53, m10_initialWmape: 73.82, m10_postWmape: 91.98, m11_initialWmape: 100, m11_postWmape: 99.74 },
+          { name: 'PRD:HCN:Helen of Troy L.P. (Texas L.P) Canada', initialWmape: 8.68, postWmape: 11.47, initialBias: 5.30, postBias: 6.68, m9_initialWmape: 20.36, m9_postWmape: 1.39, m10_initialWmape: 5.37, m10_postWmape: 18.33, m11_initialWmape: 2.26, m11_postWmape: 12.60 },
+          { name: 'PRD:OGB:OGB - Osprey Great Bear', initialWmape: 28.25, postWmape: 37.78, initialBias: 5.53, postBias: 8.02, m9_initialWmape: 15.05, m9_postWmape: 24.22, m10_initialWmape: 51.26, m10_postWmape: 77.59, m11_initialWmape: 15.01, m11_postWmape: 7.14 },
+          { name: 'PRD:KEC:KEC - Kaz Switzerland', initialWmape: 3.76, postWmape: 20.16, initialBias: -0.84, postBias: -5.77, m9_initialWmape: 1.77, m9_postWmape: 24.69, m10_initialWmape: 8.36, m10_postWmape: 24.45, m11_initialWmape: 0.37, m11_postWmape: 3.26 },
+          { name: 'PRD:CMC:CMC - Curlsmith Metro Canada', initialWmape: 77.08, postWmape: 82.89, initialBias: 98.28, postBias: 98.37, m9_initialWmape: 34.05, m9_postWmape: 38.70, m10_initialWmape: 86.37, m10_postWmape: 90.92, m11_initialWmape: 65.78, m11_postWmape: 75.91 },
+          { name: 'PRD:OMC:OMC - Osprey Metro Canada', initialWmape: 72.15, postWmape: 56.50, initialBias: -44.46, postBias: -27.73, m9_initialWmape: 11.88, m9_postWmape: 1.76, m10_initialWmape: 100, m10_postWmape: 100, m11_initialWmape: 78.77, m11_postWmape: 64.96 },
+          { name: 'PRD:SZX:Helen of Troy SZX Warehouse', initialWmape: 0, postWmape: 0, initialBias: 0, postBias: 0, m9_initialWmape: 0, m9_postWmape: 0, m10_initialWmape: 0, m10_postWmape: 0, m11_initialWmape: 0, m11_postWmape: 0 }
         ];
 
         const customerData = [
-          { name: 'OXO TARGET', initialWmape: 55.99, postWmape: 55.99, initialBias: 19.02, postBias: 29.81 },
-          { name: 'OXO WALMART', initialWmape: 51.57, postWmape: 51.57, initialBias: -54.58, postBias: -31.79 },
-          { name: 'OXO AMAZON', initialWmape: 65.96, postWmape: 65.96, initialBias: -11.00, postBias: 2.62 },
-          { name: 'OXO ALL OTHER', initialWmape: 46.66, postWmape: 46.66, initialBias: -6.56, postBias: 6.40 },
-          { name: 'AMAZON.COM (HC)', initialWmape: 62.75, postWmape: 66.47, initialBias: 32.73, postBias: 38.80 },
-          { name: 'AMAZON EMEA', initialWmape: 67.23, postWmape: 63.29, initialBias: 37.34, postBias: 39.49 },
-          { name: 'BEAUTY US WALMART', initialWmape: 51.27, postWmape: 28.04, initialBias: -73.34, postBias: 24.10 },
-          { name: 'HF AMAZON', initialWmape: 87.87, postWmape: 90.66, initialBias: 52.18, postBias: 38.86 },
-          { name: 'WAL-MART STORES ALL (US)', initialWmape: 44.23, postWmape: 44.23, initialBias: 60.12, postBias: 14.04 },
-          { name: 'WALGREENS', initialWmape: 44.21, postWmape: 44.21, initialBias: -10.90, postBias: 38.98 },
-          { name: 'TARGET STORES ALL (US)', initialWmape: 60.31, postWmape: 60.31, initialBias: 30.41, postBias: 33.42 },
-          { name: 'Beauty US Target', initialWmape: 62.97, postWmape: 24.10, initialBias: 46.94, postBias: 7.54 },
-          { name: 'CS ULTA US', initialWmape: 92.08, postWmape: 78.76, initialBias: 3.32, postBias: 5.49 },
-          { name: 'GERMANY ALL OTHER', initialWmape: 31.46, postWmape: 41.84, initialBias: -11.95, postBias: -20.73 },
-          { name: 'BEAUTY US AMAZON', initialWmape: 89.47, postWmape: 79.14, initialBias: -8.12, postBias: 0.35 },
-          { name: 'OXO KROGER', initialWmape: 66.73, postWmape: 66.73, initialBias: 27.55, postBias: 18.46 },
-          { name: 'HF ALL OTHER', initialWmape: 100.50, postWmape: 100.00, initialBias: -43.21, postBias: -28.05 },
-          { name: 'CVS MERIDIAN', initialWmape: 54.34, postWmape: 47.70, initialBias: 18.68, postBias: 19.09 },
-          { name: 'HF DTC', initialWmape: 68.23, postWmape: 61.96, initialBias: 6.79, postBias: 4.97 },
-          { name: 'HF ALL APAC', initialWmape: 100.00, postWmape: 100.00, initialBias: -124.54, postBias: -115.75 },
+          { name: 'OXO TARGET', initialWmape: 14.28, postWmape: 12.12, initialBias: 19.02, postBias: 29.81, m9_initialWmape: 11.95, m9_postWmape: 4.67, m10_initialWmape: 0.96, m10_postWmape: 0.86, m11_initialWmape: 25.60, m11_postWmape: 24.77 },
+          { name: 'OXO WALMART', initialWmape: 18.14, postWmape: 18.60, initialBias: -54.58, postBias: -31.79, m9_initialWmape: 5.42, m9_postWmape: 2.53, m10_initialWmape: 18.54, m10_postWmape: 20.25, m11_initialWmape: 34.59, m11_postWmape: 37.49 },
+          { name: 'OXO AMAZON', initialWmape: 19.33, postWmape: 16.09, initialBias: -11.00, postBias: 2.62, m9_initialWmape: 19.00, m9_postWmape: 33.13, m10_initialWmape: 29.35, m10_postWmape: 13.44, m11_initialWmape: 9.29, m11_postWmape: 5.50 },
+          { name: 'OXO ALL OTHER', initialWmape: 13.38, postWmape: 4.45, initialBias: -6.56, postBias: 6.40, m9_initialWmape: 11.93, m9_postWmape: 12.60, m10_initialWmape: 11.32, m10_postWmape: 0.67, m11_initialWmape: 16.88, m11_postWmape: 0.02 },
+          { name: 'AMAZON.COM (HC)', initialWmape: 35.24, postWmape: 30.60, initialBias: 32.73, postBias: 38.80, m9_initialWmape: 22.42, m9_postWmape: 28.02, m10_initialWmape: 64.11, m10_postWmape: 34.61, m11_initialWmape: 26.70, m11_postWmape: 29.82 },
+          { name: 'AMAZON EMEA', initialWmape: 26.19, postWmape: 32.73, initialBias: 37.34, postBias: 39.49, m9_initialWmape: 16.26, m9_postWmape: 3.16, m10_initialWmape: 30.46, m10_postWmape: 44.32, m11_initialWmape: 26.64, m11_postWmape: 35.29 },
+          { name: 'BEAUTY US WALMART', initialWmape: 27.30, postWmape: 26.39, initialBias: -73.34, postBias: 24.10, m9_initialWmape: 13.87, m9_postWmape: 10.67, m10_initialWmape: 37.94, m10_postWmape: 37.43, m11_initialWmape: 26.06, m11_postWmape: 26.48 },
+          { name: 'HF AMAZON', initialWmape: 18.89, postWmape: 13.78, initialBias: 52.18, postBias: 38.86, m9_initialWmape: 5.60, m9_postWmape: 5.94, m10_initialWmape: 23.86, m10_postWmape: 26.51, m11_initialWmape: 26.73, m11_postWmape: 0.73 },
+          { name: 'WAL-MART STORES ALL DIV (US)', initialWmape: 21.91, postWmape: 20.68, initialBias: 60.12, postBias: 14.04, m9_initialWmape: 37.55, m9_postWmape: 38.92, m10_initialWmape: 4.63, m10_postWmape: 0.26, m11_initialWmape: 16.52, m11_postWmape: 14.63 },
+          { name: 'WALGREENS', initialWmape: 34.70, postWmape: 26.43, initialBias: -10.90, postBias: 38.98, m9_initialWmape: 29.24, m9_postWmape: 40.83, m10_initialWmape: 28.53, m10_postWmape: 11.17, m11_initialWmape: 51.53, m11_postWmape: 21.65 },
+          { name: 'TARGET STORES ALL DIV (US)', initialWmape: 26.35, postWmape: 23.89, initialBias: 30.41, postBias: 33.42, m9_initialWmape: 8.66, m9_postWmape: 11.66, m10_initialWmape: 62.03, m10_postWmape: 28.17, m11_initialWmape: 19.77, m11_postWmape: 30.53 },
+          { name: 'Beauty US Target', initialWmape: 20.76, postWmape: 18.85, initialBias: 46.94, postBias: 7.54, m9_initialWmape: 6.73, m9_postWmape: 12.89, m10_initialWmape: 40.42, m10_postWmape: 28.12, m11_initialWmape: 10.92, m11_postWmape: 13.89 },
+          { name: 'NORDIC ALL OTHER', initialWmape: 27.25, postWmape: 26.19, initialBias: 3.32, postBias: 5.49, m9_initialWmape: 4.18, m9_postWmape: 20.79, m10_initialWmape: 44.77, m10_postWmape: 15.01, m11_initialWmape: 32.20, m11_postWmape: 37.20 },
+          { name: 'GERMANY ALL OTHER', initialWmape: 30.88, postWmape: 14.52, initialBias: -11.95, postBias: -20.73, m9_initialWmape: 32.71, m9_postWmape: 5.28, m10_initialWmape: 30.08, m10_postWmape: 9.88, m11_initialWmape: 30.29, m11_postWmape: 26.84 },
+          { name: 'BEAUTY US AMAZON', initialWmape: 23.27, postWmape: 28.00, initialBias: -8.12, postBias: 0.35, m9_initialWmape: 31.85, m9_postWmape: 15.85, m10_initialWmape: 13.45, m10_postWmape: 40.74, m11_initialWmape: 34.41, m11_postWmape: 14.36 },
+          { name: 'OXO KROGER', initialWmape: 46.78, postWmape: 38.20, initialBias: 27.55, postBias: 18.46, m9_initialWmape: 21.27, m9_postWmape: 28.48, m10_initialWmape: 100, m10_postWmape: 100, m11_initialWmape: 15.52, m11_postWmape: 9.62 },
+          { name: 'HF ALL OTHER', initialWmape: 86.12, postWmape: 52.62, initialBias: -43.21, postBias: -28.05, m9_initialWmape: 100, m9_postWmape: 100, m10_initialWmape: 54.62, m10_postWmape: 26.64, m11_initialWmape: 47.32, m11_postWmape: 34.22 },
+          { name: 'CVS MERIDIAN', initialWmape: 25.03, postWmape: 18.46, initialBias: 18.68, postBias: 19.09, m9_initialWmape: 36.34, m9_postWmape: 19.47, m10_initialWmape: 17.83, m10_postWmape: 28.84, m11_initialWmape: 25.86, m11_postWmape: 2.54 },
+          { name: 'HF DTC', initialWmape: 15.99, postWmape: 30.31, initialBias: 6.79, postBias: 4.97, m9_initialWmape: 12.46, m9_postWmape: 27.21, m10_initialWmape: 45.32, m10_postWmape: 68.30, m11_initialWmape: 1.93, m11_postWmape: 10.88 },
+          { name: 'HF ALL APAC', initialWmape: 72.89, postWmape: 14.64, initialBias: -124.54, postBias: -115.75, m9_initialWmape: 37.96, m9_postWmape: 5.85, m10_initialWmape: 100, m10_postWmape: 50.91, m11_initialWmape: 52.05, m11_postWmape: 2.13 }
         ];
 
         const lobData = [
-          { name: 'HO US LOB', initialWmape: 61.12, postWmape: 56.66, initialBias: -3.63, postBias: 7.17 },
-          { name: 'US LOB', initialWmape: 64.65, postWmape: 51.67, initialBias: 21.78, postBias: 24.97 },
-          { name: 'EMEA LOB', initialWmape: 51.67, postWmape: 48.57, initialBias: 19.92, postBias: 22.22 },
-          { name: 'BEAUTY US', initialWmape: 47.61, postWmape: 45.78, initialBias: 0.24, postBias: 8.95 },
-          { name: 'HO APAC LOB', initialWmape: 100.00, postWmape: 100.00, initialBias: -49.54, postBias: -44.26 },
-          { name: 'CA LOB', initialWmape: 53.13, postWmape: 46.25, initialBias: -22.59, postBias: -16.67 },
-          { name: 'Default Line of Business', initialWmape: 39.26, postWmape: 40.36, initialBias: 19.15, postBias: 28.26 },
-          { name: 'HO CA LOB', initialWmape: 100.00, postWmape: 98.36, initialBias: -48.57, postBias: -48.17 },
-          { name: 'BEAUTY CA', initialWmape: 65.68, postWmape: 58.42, initialBias: 33.67, postBias: 35.96 },
-          { name: 'LA LOB', initialWmape: 72.06, postWmape: 67.49, initialBias: 32.91, postBias: 33.58 },
-          { name: 'HO LA LOB', initialWmape: 91.92, postWmape: 100.00, initialBias: -220.53, postBias: -275.38 },
+          { name: 'HO US LOB', initialWmape: 4.33, postWmape: 2.92, initialBias: -3.63, postBias: 7.17, m9_initialWmape: 4.45, m9_postWmape: 7.33, m10_initialWmape: 6.36, m10_postWmape: 0.55, m11_initialWmape: 2.16, m11_postWmape: 1.52 },
+          { name: 'US LOB', initialWmape: 13.39, postWmape: 11.54, initialBias: 21.78, postBias: 24.97, m9_initialWmape: 4.94, m9_postWmape: 10.03, m10_initialWmape: 28.11, m10_postWmape: 8.57, m11_initialWmape: 9.15, m11_postWmape: 15.40 },
+          { name: 'EMEA LOB', initialWmape: 4.60, postWmape: 10.41, initialBias: 19.92, postBias: 22.22, m9_initialWmape: 4.12, m9_postWmape: 2.64, m10_initialWmape: 2.49, m10_postWmape: 11.57, m11_initialWmape: 7.06, m11_postWmape: 15.02 },
+          { name: 'BEAUTY US', initialWmape: 6.20, postWmape: 12.73, initialBias: 0.24, postBias: 8.95, m9_initialWmape: 8.19, m9_postWmape: 8.78, m10_initialWmape: 10.24, m10_postWmape: 22.13, m11_initialWmape: 0.14, m11_postWmape: 5.18 },
+          { name: 'HO APAC LOB', initialWmape: 52.73, postWmape: 8.48, initialBias: -49.54, postBias: -44.26, m9_initialWmape: 34.06, m9_postWmape: 8.85, m10_initialWmape: 94.96, m10_postWmape: 11.50, m11_initialWmape: 40.00, m11_postWmape: 5.79 },
+          { name: 'CA LOB', initialWmape: 14.75, postWmape: 8.82, initialBias: -22.59, postBias: -16.67, m9_initialWmape: 16.11, m9_postWmape: 9.18, m10_initialWmape: 12.83, m10_postWmape: 9.66, m11_initialWmape: 15.91, m11_postWmape: 7.54 },
+          { name: 'Default Line of Business', initialWmape: 25.76, postWmape: 29.47, initialBias: 19.15, postBias: 28.26, m9_initialWmape: 47.20, m9_postWmape: 51.56, m10_initialWmape: 10.21, m10_postWmape: 7.82, m11_initialWmape: 3.07, m11_postWmape: 10.81 },
+          { name: 'HO CA LOB', initialWmape: 71.71, postWmape: 75.06, initialBias: -48.57, postBias: -48.17, m9_initialWmape: 28.61, m9_postWmape: 42.58, m10_initialWmape: 92.28, m10_postWmape: 100, m11_initialWmape: 100, m11_postWmape: 90.05 },
+          { name: 'BEAUTY CA', initialWmape: 17.03, postWmape: 12.49, initialBias: 33.67, postBias: 35.96, m9_initialWmape: 47.57, m9_postWmape: 5.79, m10_initialWmape: 6.67, m10_postWmape: 19.13, m11_initialWmape: 2.30, m11_postWmape: 10.79 },
+          { name: 'LA LOB', initialWmape: 18.77, postWmape: 16.30, initialBias: 32.91, postBias: 33.58, m9_initialWmape: 28.45, m9_postWmape: 23.17, m10_initialWmape: 3.12, m10_postWmape: 0.07, m11_initialWmape: 22.68, m11_postWmape: 23.21 },
+          { name: 'HO LA LOB', initialWmape: 100, postWmape: 100, initialBias: -220.53, postBias: -275.38, m9_initialWmape: 20.83, m9_postWmape: 42.08, m10_initialWmape: 100, m10_postWmape: 100, m11_initialWmape: 100, m11_postWmape: 100 }
         ];
 
-
         // ==========================================
-        // CSV PARSING & DATA MERGING LOGIC
+        // DYNAMIC STATE & KPI TOGGLE LOGIC
         // ==========================================
         
         let dynamicOrgData = JSON.parse(JSON.stringify(orgData));
         let dynamicCustomerData = JSON.parse(JSON.stringify(customerData));
         let dynamicLobData = JSON.parse(JSON.stringify(lobData));
+        
+        let currentMonthlyGlobalMetric = 'wmape';
+
+        function toggleMonthlyGlobalMetric() {
+            currentMonthlyGlobalMetric = currentMonthlyGlobalMetric === 'wmape' ? 'accuracy' : 'wmape';
+            renderMonthlyGlobalMetrics();
+        }
+
+        function renderMonthlyGlobalMetrics() {
+            const title = document.getElementById('mg-titleText');
+            const isWmape = currentMonthlyGlobalMetric === 'wmape';
+            const colorClass = isWmape ? 'text-indigo-600' : 'text-sky-600';
+            
+            title.innerText = `Global Monthly ${isWmape ? 'WMAPE' : 'Accuracy'} (%)`;
+
+            ['overall', 'm9', 'm10', 'm11'].forEach(month => {
+                const data = monthlyGlobalMetrics[month];
+                let initVal, postVal;
+                
+                if (isWmape) {
+                    initVal = data.initialWmape;
+                    postVal = data.postWmape;
+                } else {
+                    initVal = Math.max(0, 100 - data.initialWmape);
+                    postVal = Math.max(0, 100 - data.postWmape);
+                }
+
+                document.getElementById(`mg-${month}-init`).innerText = initVal.toFixed(2) + '%';
+                
+                const postEl = document.getElementById(`mg-${month}-post`);
+                postEl.innerText = postVal.toFixed(2) + '%';
+                postEl.className = `${colorClass} font-extrabold text-xl md:text-2xl`;
+            });
+        }
 
         // Helper to safely parse a line of CSV including quotes and commas inside numbers
         function parseCSVLine(line) {
@@ -624,7 +713,7 @@
                     d.initialAccuracy = clamp(Number((100 - d.initialWmape).toFixed(2)), 0, 100);
                     d.postAccuracy = clamp(Number((100 - d.postWmape).toFixed(2)), 0, 100);
 
-                    // Ensure Monthly placeholders aren't undefined to prevent "NaN" blank chart errors
+                    // Monthly formatting and accuracy calcs
                     d.m9_initialWmape = Math.min(d.m9_initialWmape || 0, 100);
                     d.m9_postWmape = Math.min(d.m9_postWmape || 0, 100);
                     d.m10_initialWmape = Math.min(d.m10_initialWmape || 0, 100);
@@ -1019,6 +1108,7 @@
 
             // Init Tab 3
             populateMonthlyFilterDropdown(document.getElementById('monthlyCategorySelect').value);
+            renderMonthlyGlobalMetrics(); // Init the clickable header
             // Don't render monthly chart here yet, it renders upon tab switch to prevent sizing issues
         });
 
