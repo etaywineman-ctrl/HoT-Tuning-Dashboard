@@ -40,17 +40,23 @@
 <body class="p-4 md:p-8 flex flex-col min-h-screen text-slate-800">
     <div class="w-full max-w-7xl mx-auto flex-grow flex flex-col space-y-6">
         
-        <!-- Header with Upload Button -->
+        <!-- Header with Specific Upload Button -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Low Variability Steady</h1>
                 <p class="text-slate-500 font-medium mt-1">Tuning Project Performance Dashboard</p>
             </div>
-            <div class="mt-4 md:mt-0 flex space-x-3">
+            <div class="mt-4 md:mt-0 flex rounded-lg shadow-sm">
                 <input type="file" id="csvUpload" accept=".csv" class="hidden" />
-                <button id="csvUploadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center">
+                <select id="uploadCategory" class="bg-slate-50 border border-slate-200 border-r-0 text-slate-700 text-sm rounded-l-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none font-medium cursor-pointer">
+                    <option value="auto">Auto-Detect File</option>
+                    <option value="org">Organization File</option>
+                    <option value="customer">Customer File</option>
+                    <option value="lob">LOB File</option>
+                </select>
+                <button id="csvUploadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-r-lg text-sm font-bold transition-colors flex items-center border border-indigo-600">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Upload CSV Data
+                    Upload CSV
                 </button>
             </div>
         </div>
@@ -455,10 +461,10 @@
           { name: 'GERMANY ALL OTHER', initialWmape: 31.46, postWmape: 41.84, initialBias: -11.95, postBias: -20.73 },
           { name: 'BEAUTY US AMAZON', initialWmape: 89.47, postWmape: 79.14, initialBias: -8.12, postBias: 0.35 },
           { name: 'OXO KROGER', initialWmape: 66.73, postWmape: 66.73, initialBias: 27.55, postBias: 18.46 },
-          { name: 'HF ALL OTHER', initialWmape: 100.50, postWmape: 109.34, initialBias: -43.21, postBias: -28.05 },
+          { name: 'HF ALL OTHER', initialWmape: 100.50, postWmape: 100.00, initialBias: -43.21, postBias: -28.05 },
           { name: 'CVS MERIDIAN', initialWmape: 54.34, postWmape: 47.70, initialBias: 18.68, postBias: 19.09 },
           { name: 'HF DTC', initialWmape: 68.23, postWmape: 61.96, initialBias: 6.79, postBias: 4.97 },
-          { name: 'HF ALL APAC', initialWmape: 117.99, postWmape: 112.65, initialBias: -124.54, postBias: -115.75 },
+          { name: 'HF ALL APAC', initialWmape: 100.00, postWmape: 100.00, initialBias: -124.54, postBias: -115.75 },
         ];
 
         const lobData = [
@@ -466,13 +472,13 @@
           { name: 'US LOB', initialWmape: 64.65, postWmape: 51.67, initialBias: 21.78, postBias: 24.97 },
           { name: 'EMEA LOB', initialWmape: 51.67, postWmape: 48.57, initialBias: 19.92, postBias: 22.22 },
           { name: 'BEAUTY US', initialWmape: 47.61, postWmape: 45.78, initialBias: 0.24, postBias: 8.95 },
-          { name: 'HO APAC LOB', initialWmape: 107.00, postWmape: 103.42, initialBias: -49.54, postBias: -44.26 },
+          { name: 'HO APAC LOB', initialWmape: 100.00, postWmape: 100.00, initialBias: -49.54, postBias: -44.26 },
           { name: 'CA LOB', initialWmape: 53.13, postWmape: 46.25, initialBias: -22.59, postBias: -16.67 },
           { name: 'Default Line of Business', initialWmape: 39.26, postWmape: 40.36, initialBias: 19.15, postBias: 28.26 },
-          { name: 'HO CA LOB', initialWmape: 100.39, postWmape: 98.36, initialBias: -48.57, postBias: -48.17 },
+          { name: 'HO CA LOB', initialWmape: 100.00, postWmape: 98.36, initialBias: -48.57, postBias: -48.17 },
           { name: 'BEAUTY CA', initialWmape: 65.68, postWmape: 58.42, initialBias: 33.67, postBias: 35.96 },
           { name: 'LA LOB', initialWmape: 72.06, postWmape: 67.49, initialBias: 32.91, postBias: 33.58 },
-          { name: 'HO LA LOB', initialWmape: 91.92, postWmape: 110.58, initialBias: -220.53, postBias: -275.38 },
+          { name: 'HO LA LOB', initialWmape: 91.92, postWmape: 100.00, initialBias: -220.53, postBias: -275.38 },
         ];
 
 
@@ -508,7 +514,7 @@
         // Extremely safe clean function
         const safeClean = (val) => val ? String(val).split('%').join('').split(',').join('').split('"').join('').trim() : '0';
 
-        function processUploadedCSV(csvString) {
+        function processUploadedCSV(csvString, targetCategory) {
             if (!csvString || !csvString.trim()) return;
 
             const lines = csvString.trim().split('\n');
@@ -541,37 +547,51 @@
                 if (!entityName) continue;
 
                 const dateStr = safeClean(cols[dateIdx]);
-                const wInit = parseFloat(safeClean(cols[wmapeInitIdx]));
-                const wPost = parseFloat(safeClean(cols[wmapePostIdx]));
-                const oInit = parseFloat(safeClean(cols[overallInitIdx]));
-                const oPost = parseFloat(safeClean(cols[overallPostIdx]));
+                
+                // Parse numbers and strictly cap WMAPE to 100%
+                const wInit = Math.min(parseFloat(safeClean(cols[wmapeInitIdx])) || 0, 100);
+                const wPost = Math.min(parseFloat(safeClean(cols[wmapePostIdx])) || 0, 100);
+                const oInit = Math.min(parseFloat(safeClean(cols[overallInitIdx])) || 0, 100);
+                const oPost = Math.min(parseFloat(safeClean(cols[overallPostIdx])) || 0, 100);
 
                 // Find which dropdown this entity actually belongs to
                 let targetMap;
-                if (orgMap.has(entityName)) {
-                    targetMap = orgMap;
-                } else if (custMap.has(entityName)) {
-                    targetMap = custMap;
-                } else if (lobMap.has(entityName)) {
-                    targetMap = lobMap;
-                } else {
-                    // It's a completely new entity! We intelligently guess where to put it.
-                    if (entityName.includes('LOB')) targetMap = lobMap;
-                    else if (entityName.startsWith('PRD:')) targetMap = orgMap;
-                    else targetMap = custMap;
-                    
-                    targetMap.set(entityName, { name: entityName, initialWmape: oInit, postWmape: oPost, initialBias: 0, postBias: 0, hasCSVData: true });
+                if (targetCategory === 'org') targetMap = orgMap;
+                else if (targetCategory === 'customer') targetMap = custMap;
+                else if (targetCategory === 'lob') targetMap = lobMap;
+                else {
+                    // Auto-Detect Guesser
+                    if (orgMap.has(entityName)) targetMap = orgMap;
+                    else if (custMap.has(entityName)) targetMap = custMap;
+                    else if (lobMap.has(entityName)) targetMap = lobMap;
+                    else {
+                        if (entityName.includes('LOB') || entityName.toLowerCase().includes('line of business')) targetMap = lobMap;
+                        else if (entityName.startsWith('PRD:')) targetMap = orgMap;
+                        else targetMap = custMap;
+                    }
                 }
 
-                // Apply the data
-                const entry = targetMap.get(entityName);
-                if (!isNaN(oInit)) entry.initialWmape = oInit;
-                if (!isNaN(oPost)) entry.postWmape = oPost;
-                entry.hasCSVData = true;
+                // Initialize the entry if it doesn't exist
+                if (!targetMap.has(entityName)) {
+                    targetMap.set(entityName, { name: entityName, initialWmape: oInit, postWmape: oPost, initialBias: 0, postBias: 0, hasCSVData: true });
+                } else {
+                    const entry = targetMap.get(entityName);
+                    if (!isNaN(oInit) && oInit !== 0) entry.initialWmape = oInit; // Update overall deduped
+                    if (!isNaN(oPost) && oPost !== 0) entry.postWmape = oPost;
+                    entry.hasCSVData = true;
+                }
 
-                if (dateStr.startsWith('9/')) { entry.m9_initialWmape = wInit; entry.m9_postWmape = wPost; }
-                if (dateStr.startsWith('10/')) { entry.m10_initialWmape = wInit; entry.m10_postWmape = wPost; }
-                if (dateStr.startsWith('11/')) { entry.m11_initialWmape = wInit; entry.m11_postWmape = wPost; }
+                const entry = targetMap.get(entityName);
+                
+                // Highly robust date parsing logic to prevent blank charts
+                const dStrLower = dateStr.toLowerCase();
+                let isM9 = dateStr.startsWith('9/') || dateStr.startsWith('09/') || dateStr.includes('-09-') || dStrLower.includes('sep');
+                let isM10 = dateStr.startsWith('10/') || dateStr.includes('-10-') || dStrLower.includes('oct');
+                let isM11 = dateStr.startsWith('11/') || dateStr.includes('-11-') || dStrLower.includes('nov');
+
+                if (isM9) { entry.m9_initialWmape = wInit; entry.m9_postWmape = wPost; }
+                if (isM10) { entry.m10_initialWmape = wInit; entry.m10_postWmape = wPost; }
+                if (isM11) { entry.m11_initialWmape = wInit; entry.m11_postWmape = wPost; }
             }
 
             // Restore the arrays from the Maps
@@ -581,34 +601,36 @@
         }
 
         // ==========================================
-        // DYNAMIC CALCULATIONS & UPLOADER
+        // DYNAMIC CALCULATIONS
         // ==========================================
         
         function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
 
         function recalculateDerivedMetrics() {
             globalData.forEach(d => {
+                d.wmape = Math.min(d.wmape, 100);
                 d.accuracy = clamp(Number((100 - d.wmape).toFixed(2)), 0, 100);
             });
             
             [dynamicOrgData, dynamicCustomerData, dynamicLobData].forEach(dataset => {
                 dataset.forEach(d => {
+                    // Strict 100% Capping for all initial values
+                    d.initialWmape = Math.min(d.initialWmape || 0, 100);
+                    d.postWmape = Math.min(d.postWmape || 0, 100);
+
                     if(d.initialBias !== undefined) d.initialBias = clamp(d.initialBias, -100, 100);
                     if(d.postBias !== undefined) d.postBias = clamp(d.postBias, -100, 100);
 
                     d.initialAccuracy = clamp(Number((100 - d.initialWmape).toFixed(2)), 0, 100);
                     d.postAccuracy = clamp(Number((100 - d.postWmape).toFixed(2)), 0, 100);
 
-                    // MOCK DATA GENERATOR (Provides placeholders until user uploads real CSV)
-                    if (d.m9_initialWmape === undefined) {
-                        let seed = d.name ? d.name.length : 1; 
-                        d.m9_initialWmape = clamp(d.initialWmape + (seed % 5) - 2, 0, 100);
-                        d.m9_postWmape = clamp(d.postWmape + (seed % 4) - 2, 0, 100);
-                        d.m10_initialWmape = clamp(d.initialWmape + ((seed*2) % 6) - 3, 0, 100);
-                        d.m10_postWmape = clamp(d.postWmape + ((seed*2) % 5) - 2, 0, 100);
-                        d.m11_initialWmape = clamp(d.initialWmape + ((seed*3) % 7) - 3, 0, 100);
-                        d.m11_postWmape = clamp(d.postWmape + ((seed*3) % 6) - 3, 0, 100);
-                    }
+                    // Ensure Monthly placeholders aren't undefined to prevent "NaN" blank chart errors
+                    d.m9_initialWmape = Math.min(d.m9_initialWmape || 0, 100);
+                    d.m9_postWmape = Math.min(d.m9_postWmape || 0, 100);
+                    d.m10_initialWmape = Math.min(d.m10_initialWmape || 0, 100);
+                    d.m10_postWmape = Math.min(d.m10_postWmape || 0, 100);
+                    d.m11_initialWmape = Math.min(d.m11_initialWmape || 0, 100);
+                    d.m11_postWmape = Math.min(d.m11_postWmape || 0, 100);
 
                     d.m9_initialAccuracy = clamp(Number((100 - d.m9_initialWmape).toFixed(2)), 0, 100);
                     d.m9_postAccuracy = clamp(Number((100 - d.m9_postWmape).toFixed(2)), 0, 100);
@@ -628,12 +650,15 @@
         document.getElementById('csvUpload').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
+            
+            const targetCategory = document.getElementById('uploadCategory').value;
             const reader = new FileReader();
+            
             reader.onload = function(e) {
                 const text = e.target.result;
                 
-                // Process the single CSV file completely
-                processUploadedCSV(text);
+                // Process the uploaded CSV specific to the chosen category
+                processUploadedCSV(text, targetCategory);
                 recalculateDerivedMetrics();
                 
                 // Refresh UI
@@ -643,7 +668,7 @@
                 updateBarChart();
                 updateMonthlyChart();
                 
-                alert("Data successfully updated and sorted from CSV!");
+                alert("Data successfully updated! Charts have been refreshed.");
             };
             reader.readAsText(file);
             e.target.value = ''; // Reset input
