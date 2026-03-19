@@ -445,6 +445,53 @@
                     <canvas id="monthlyBarChart"></canvas>
                 </div>
             </div>
+
+            <!-- YOY Analysis Section -->
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="pb-6 border-b border-slate-100 mb-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-slate-800">YOY Analysis: Forecast Gap vs Demand</h2>
+                    </div>
+                    <p class="text-slate-500 text-sm mt-1">Combinations percentage and the gap range between the demand and the forecast. <span class="font-semibold text-indigo-600">The primary goal is to maximize combinations under the &lt;25% range.</span></p>
+                    <p class="text-xs text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1.5 rounded-md mt-3 inline-block font-medium">
+                        <strong class="font-bold">Note:</strong> Dates for the analysis are from December 2024 to October 2026.
+                    </p>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap text-center">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider border-r border-slate-200">Gap Range</th>
+                                <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider border-r border-slate-200">Initial Forecast<br/><span class="text-[10px] text-slate-500 normal-case">Combinations %</span></th>
+                                <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider">Post Tuning Forecast<br/><span class="text-[10px] text-slate-500 normal-case">Combinations %</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-800 text-left border-r border-slate-100 bg-slate-50/50">&lt; 25%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium border-r border-slate-100">16.77%</td>
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-emerald-600 bg-emerald-50/30">19.47% <span class="text-xs ml-1">↑</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-800 text-left border-r border-slate-100 bg-slate-50/50">&lt; 50%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium border-r border-slate-100">29.24%</td>
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-emerald-600 bg-emerald-50/30">30.90% <span class="text-xs ml-1">↑</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-800 text-left border-r border-slate-100 bg-slate-50/50">&lt; 100%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium border-r border-slate-100">41.80%</td>
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-600">40.93% <span class="text-xs ml-1">↓</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-800 text-left border-r border-slate-100 bg-slate-50/50">&gt; 100%</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium border-r border-slate-100">12.19%</td>
+                                <td class="px-6 py-4 whitespace-nowrap font-bold text-emerald-600 bg-emerald-50/30">8.70% <span class="text-xs ml-1">↓</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -467,14 +514,60 @@
         ];
 
         // ==========================================
+        // YOY ANALYSIS TABLE DATA
+        // ==========================================
+        const yoyTableData = [
+            { month: 'Oct-24', c10: 35, c20: 19, c30: 13, c40: 7, c50: 8, cOver50: 18 },
+            { month: 'Nov-24', c10: 36, c20: 17, c30: 10, c40: 6, c50: 7, cOver50: 24 },
+            { month: 'Dec-24', c10: 33, c20: 15, c30: 10, c40: 8, c50: 6, cOver50: 29 },
+            { month: 'Jan-25', c10: 29, c20: 15, c30: 11, c40: 7, c50: 5, cOver50: 33 },
+            { month: 'Feb-25', c10: 26, c20: 16, c30: 9, c40: 7, c50: 5, cOver50: 36 },
+            { month: 'Mar-25', c10: 30, c20: 15, c30: 12, c40: 8, c50: 6, cOver50: 29 },
+            { month: 'Apr-25', c10: 29, c20: 16, c30: 9, c40: 7, c50: 6, cOver50: 33 },
+            { month: 'May-25', c10: 29, c20: 13, c30: 11, c40: 7, c50: 5, cOver50: 34 },
+            { month: 'Jun-25', c10: 29, c20: 16, c30: 12, c40: 8, c50: 6, cOver50: 29 },
+            { month: 'Jul-25', c10: 33, c20: 14, c30: 10, c40: 8, c50: 6, cOver50: 29 },
+            { month: 'Aug-25', c10: 32, c20: 15, c30: 9, c40: 7, c50: 7, cOver50: 29 },
+            { month: 'Sep-25', c10: 28, c20: 14, c30: 11, c40: 8, c50: 7, cOver50: 33 }
+        ];
+
+        function createYoyCell(val, isWarning) {
+            const bgColor = isWarning ? 'bg-amber-200' : 'bg-sky-100';
+            // Inner div acts as the progress bar matching the background
+            return `<td class="px-3 py-2.5 relative border-r border-slate-100 align-middle">
+                <div class="absolute top-1.5 bottom-1.5 left-1.5 ${bgColor} rounded-sm" style="width: calc(${val}% - 12px)"></div>
+                <div class="relative z-10 text-right text-sm font-semibold text-slate-700 pr-1">${val}%</div>
+            </td>`;
+        }
+
+        function renderYoyTable() {
+            const tbody = document.getElementById('yoyTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            yoyTableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-800 border-r border-slate-100 bg-slate-50/50">${row.month}</td>
+                    ${createYoyCell(row.c10, false)}
+                    ${createYoyCell(row.c20, false)}
+                    ${createYoyCell(row.c30, false)}
+                    ${createYoyCell(row.c40, false)}
+                    ${createYoyCell(row.c50, false)}
+                    ${createYoyCell(row.cOver50, true)}
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
         // MONTHLY GLOBAL KPI HEADER DATA
         // ==========================================
-        // REPLACE THESE PLACEHOLDER NUMBERS WITH THE EXACT WMAPE VALUES FROM YOUR UPLOADED IMAGE
         const monthlyGlobalMetrics = {
             overall: { initialWmape: 86.32, postWmape: 49.34 },
-            m9: { initialWmape: 56.38, postWmape: 53.6 }, // <-- Replace 65.00 and 60.00
-            m10: { initialWmape: 63.53, postWmape: 57.08 }, // <-- Replace 63.00 and 58.00
-            m11: { initialWmape: 61.25, postWmape: 56.78 }  // <-- Replace 66.00 and 61.00
+            m9: { initialWmape: 56.38, postWmape: 53.6 },
+            m10: { initialWmape: 63.53, postWmape: 57.08 },
+            m11: { initialWmape: 61.25, postWmape: 56.78 }
         };
 
         const orgData = [
