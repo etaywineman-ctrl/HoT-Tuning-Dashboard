@@ -505,28 +505,33 @@
             return result;
         }
 
-        // Extremely safe clean function (removed regex completely to prevent syntax errors)
+        // Extremely safe clean function
         const safeClean = (val) => val ? String(val).split('%').join('').split(',').join('').split('"').join('').trim() : '0';
 
-        function parseEntityCSV(csvString, baseDataArray) {
-            if (!csvString || !csvString.trim()) return baseDataArray;
+        function processUploadedCSV(csvString) {
+            if (!csvString || !csvString.trim()) return;
 
             const lines = csvString.trim().split('\n');
-            if (lines.length < 2) return baseDataArray;
+            if (lines.length < 2) return;
 
             const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
             
-            const entityIdx = 0;
+            const entityIdx = 0; // Column A is always the name
             const dateIdx = headers.findIndex(h => h.includes('date') || h.includes('month'));
             const wmapeInitIdx = headers.findIndex(h => h === 'wmape initial');
             const wmapePostIdx = headers.findIndex(h => h === 'wmape post tuning');
             const overallInitIdx = headers.findIndex(h => h === 'overall wmape initial');
             const overallPostIdx = headers.findIndex(h => h === 'overall wmape post tuning');
 
-            if (wmapeInitIdx === -1) return baseDataArray;
+            if (wmapeInitIdx === -1) {
+                alert("Could not find required columns in your CSV. Ensure the top row contains 'WMAPE Initial', etc.");
+                return;
+            }
 
-            const map = new Map();
-            baseDataArray.forEach(d => { map.set(d.name, { ...d, hasCSVData: false }); });
+            // Create Maps of existing predefined data to preserve sorting order perfectly
+            const orgMap = new Map(dynamicOrgData.map(d => [d.name, d]));
+            const custMap = new Map(dynamicCustomerData.map(d => [d.name, d]));
+            const lobMap = new Map(dynamicLobData.map(d => [d.name, d]));
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
@@ -541,27 +546,38 @@
                 const oInit = parseFloat(safeClean(cols[overallInitIdx]));
                 const oPost = parseFloat(safeClean(cols[overallPostIdx]));
 
-                if (!map.has(entityName)) {
-                    map.set(entityName, { name: entityName, initialWmape: oInit, postWmape: oPost, initialBias: 0, postBias: 0, hasCSVData: true });
+                // Find which dropdown this entity actually belongs to
+                let targetMap;
+                if (orgMap.has(entityName)) {
+                    targetMap = orgMap;
+                } else if (custMap.has(entityName)) {
+                    targetMap = custMap;
+                } else if (lobMap.has(entityName)) {
+                    targetMap = lobMap;
                 } else {
-                    const entry = map.get(entityName);
-                    if (!isNaN(oInit)) entry.initialWmape = oInit;
-                    if (!isNaN(oPost)) entry.postWmape = oPost;
-                    entry.hasCSVData = true;
+                    // It's a completely new entity! We intelligently guess where to put it.
+                    if (entityName.includes('LOB')) targetMap = lobMap;
+                    else if (entityName.startsWith('PRD:')) targetMap = orgMap;
+                    else targetMap = custMap;
+                    
+                    targetMap.set(entityName, { name: entityName, initialWmape: oInit, postWmape: oPost, initialBias: 0, postBias: 0, hasCSVData: true });
                 }
 
-                const entry = map.get(entityName);
+                // Apply the data
+                const entry = targetMap.get(entityName);
+                if (!isNaN(oInit)) entry.initialWmape = oInit;
+                if (!isNaN(oPost)) entry.postWmape = oPost;
+                entry.hasCSVData = true;
+
                 if (dateStr.startsWith('9/')) { entry.m9_initialWmape = wInit; entry.m9_postWmape = wPost; }
                 if (dateStr.startsWith('10/')) { entry.m10_initialWmape = wInit; entry.m10_postWmape = wPost; }
                 if (dateStr.startsWith('11/')) { entry.m11_initialWmape = wInit; entry.m11_postWmape = wPost; }
             }
 
-            const result = [];
-            baseDataArray.forEach(d => {
-                if (map.has(d.name)) { result.push(map.get(d.name)); map.delete(d.name); }
-            });
-            map.forEach(value => result.push(value));
-            return result;
+            // Restore the arrays from the Maps
+            dynamicOrgData = Array.from(orgMap.values());
+            dynamicCustomerData = Array.from(custMap.values());
+            dynamicLobData = Array.from(lobMap.values());
         }
 
         // ==========================================
@@ -615,19 +631,19 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
-                dynamicOrgData = parseEntityCSV(text, dynamicOrgData);
-                dynamicCustomerData = parseEntityCSV(text, dynamicCustomerData);
-                dynamicLobData = parseEntityCSV(text, dynamicLobData);
                 
+                // Process the single CSV file completely
+                processUploadedCSV(text);
                 recalculateDerivedMetrics();
                 
+                // Refresh UI
                 populateFilterDropdown(document.getElementById('categorySelect').value);
                 populateMonthlyFilterDropdown(document.getElementById('monthlyCategorySelect').value);
                 
                 updateBarChart();
                 updateMonthlyChart();
                 
-                alert("Data successfully updated from CSV!");
+                alert("Data successfully updated and sorted from CSV!");
             };
             reader.readAsText(file);
             e.target.value = ''; // Reset input
