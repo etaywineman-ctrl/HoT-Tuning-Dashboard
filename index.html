@@ -40,21 +40,31 @@
 <body class="p-4 md:p-8 flex flex-col min-h-screen text-slate-800">
     <div class="w-full max-w-7xl mx-auto flex-grow flex flex-col space-y-6">
         
-        <!-- Header -->
+        <!-- Header with Upload Button -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Low Variability Steady</h1>
                 <p class="text-slate-500 font-medium mt-1">Tuning Project Performance Dashboard</p>
             </div>
+            <div class="mt-4 md:mt-0 flex space-x-3">
+                <input type="file" id="csvUpload" accept=".csv" class="hidden" />
+                <button id="csvUploadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Upload CSV Data
+                </button>
+            </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex space-x-1 bg-slate-200/50 p-1 rounded-xl w-fit">
-            <button id="tabBtn-entity" onclick="switchTab('entity')" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-indigo-600 shadow-sm border border-slate-200/60">
+        <div class="flex space-x-1 bg-slate-200/50 p-1 rounded-xl w-fit flex-wrap gap-y-1">
+            <button id="tabBtn-entity" onclick="switchTab('entity')" class="px-5 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 bg-white text-indigo-700 shadow-sm border border-slate-200/60">
                 1. Entity Breakdown
             </button>
-            <button id="tabBtn-global" onclick="switchTab('global')" class="px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50">
+            <button id="tabBtn-global" onclick="switchTab('global')" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50">
                 2. Low Variability Steady
+            </button>
+            <button id="tabBtn-monthly" onclick="switchTab('monthly')" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50">
+                3. Monthly Breakdown
             </button>
         </div>
 
@@ -320,6 +330,72 @@
             </div>
 
         </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: MONTHLY BREAKDOWN -->
+        <!-- ========================================== -->
+        <div id="tabContent-monthly" class="flex flex-col space-y-4 animate-fade-in hidden">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col xl:flex-row xl:items-end justify-between pb-6 border-b border-slate-100 gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-1">
+                            <h2 class="text-xl font-bold text-slate-800">Monthly Breakdown</h2>
+                            <span class="bg-sky-50 text-sky-700 border border-sky-100 px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider">Time Series Analysis</span>
+                        </div>
+                        <p class="text-slate-500 text-sm mt-1">Granular analysis of Pre vs Post Tuning accuracy changes broken down by September, October, and November.</p>
+                        <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-md mt-3 inline-block font-medium">
+                            <strong class="font-bold">Note:</strong> This breakdown displays the top 20 entities and does not represent the entire dataset.
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row flex-wrap items-end gap-3 mt-2 xl:mt-0">
+                        <!-- Data Labels Toggle -->
+                        <div class="flex items-center mb-2 sm:mb-0 mr-2">
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="monthlyToggle" id="monthlyToggleLabels" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-slate-300 appearance-none cursor-pointer transition-all duration-200 z-10 top-0 left-0"/>
+                                <label for="monthlyToggleLabels" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                            </div>
+                            <label for="monthlyToggleLabels" class="text-sm font-medium text-slate-700 cursor-pointer">Data Labels</label>
+                        </div>
+
+                        <!-- Entity Filter Dropdown -->
+                        <div id="monthlyFilterContainer" class="relative inline-block w-full sm:w-48">
+                            <button id="monthlyFilterBtn" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 block p-2.5 shadow-sm outline-none transition-all flex justify-between items-center font-medium">
+                                <span class="truncate">Filter Entities...</span>
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="monthlyFilterDropdown" class="hidden absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto p-1.5 right-0">
+                                <!-- Checkboxes injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Time Period Select -->
+                        <select id="monthlyTimePeriodSelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-medium shadow-sm outline-none transition-all w-full sm:w-40">
+                            <option value="overall">Overall</option>
+                            <option value="m9">September</option>
+                            <option value="m10">October</option>
+                            <option value="m11">November</option>
+                        </select>
+
+                        <select id="monthlyCategorySelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-medium shadow-sm outline-none transition-all w-full sm:w-48">
+                            <option value="lob">Line Of Business</option>
+                            <option value="customer">HOT Customer Group</option>
+                            <option value="org">Organization</option>
+                        </select>
+
+                        <select id="monthlyMetricSelect" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-medium shadow-sm outline-none transition-all w-full sm:w-40">
+                            <option value="wmape">WMAPE (%)</option>
+                            <option value="accuracy">Accuracy (%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="chart-container pt-6">
+                    <canvas id="monthlyBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -327,7 +403,7 @@
         Chart.register(ChartDataLabels);
 
         // ==========================================
-        // DATA SOURCES
+        // DATA SOURCES (WEIGHT-BASED MASTER LISTS)
         // ==========================================
         const globalData = [
           { stage: 'Pre Tuning', wmape: 64.68, bias: -13.82 },
@@ -340,25 +416,26 @@
         ];
 
         const orgData = [
-          { name: 'PRD:OXT:OXT - OXO Int.', initialWmape: 59.25, postWmape: 52.96, initialBias: -6.91, postBias: 6.56 },
-          { name: 'PRD:KMS:KMS - Kaz USA', initialWmape: 64.60, postWmape: 51.64, initialBias: 21.74, postBias: 24.94 },
-          { name: 'PRD:KTN:KTN - Kaz Switz.', initialWmape: 48.44, postWmape: 46.56, initialBias: 17.51, postBias: 18.15 },
-          { name: 'PRD:HOB:Helen of Troy DC', initialWmape: 36.48, postWmape: 36.75, initialBias: -1.75, postBias: 9.30 },
-          { name: 'PRD:HFT:HFT-Hydro Flask', initialWmape: 71.01, postWmape: 75.93, initialBias: 17.17, postBias: 13.61 },
-          { name: 'PRD:JUK:HOT (UK) Ltd', initialWmape: 60.87, postWmape: 57.74, initialBias: 37.70, postBias: 40.22 },
-          { name: 'PRD:COB:COB - Curlsmith', initialWmape: 69.49, postWmape: 64.87, initialBias: 15.54, postBias: 18.90 },
-          { name: 'PRD:JHM:JHM - Jiaxing', initialWmape: 108.33, postWmape: 102.32, initialBias: -55.56, postBias: -46.55 },
-          { name: 'PRD:DOB:DOB - Drybar USA', initialWmape: 66.43, postWmape: 58.45, initialBias: -16.39, postBias: -9.86 },
-          { name: 'PRD:KCN:KCN - Kaz Metro CA', initialWmape: 53.13, postWmape: 46.25, initialBias: -22.59, postBias: -16.67 },
-          { name: 'PRD:OOB:OOB - Osprey', initialWmape: 72.03, postWmape: 78.63, initialBias: -13.62, postBias: -15.78 },
-          { name: 'PRD:HMZ:HMZ - HOT Mexico', initialWmape: 48.24, postWmape: 48.04, initialBias: 23.90, postBias: 30.13 },
-          { name: 'PRD:OKT:OKT - Osprey KTN', initialWmape: 117.95, postWmape: 113.32, initialBias: -87.01, postBias: -77.82 },
-          { name: 'PRD:HFC:Hydro Flask Metro CA', initialWmape: 100.58, postWmape: 99.29, initialBias: -50.35, postBias: -52.68 },
-          { name: 'PRD:HCN:Helen of Troy (CA)', initialWmape: 42.10, postWmape: 33.15, initialBias: 5.30, postBias: 6.68 },
-          { name: 'PRD:OGB:Osprey Great Bear', initialWmape: 72.75, postWmape: 69.96, initialBias: 5.53, postBias: 8.02 },
-          { name: 'PRD:KEC:KEC - Kaz Switz.', initialWmape: 28.92, postWmape: 34.14, initialBias: -0.84, postBias: -5.77 },
-          { name: 'PRD:CMC:Curlsmith Metro CA', initialWmape: 99.70, postWmape: 99.58, initialBias: 98.28, postBias: 98.37 },
-          { name: 'PRD:OMC:Osprey Metro CA', initialWmape: 107.30, postWmape: 102.19, initialBias: -44.46, postBias: -27.73 },
+          { name: 'PRD:OXT:OXT - OXO International Ltd.', initialWmape: 2.37, postWmape: 1.95, initialBias: -6.91, postBias: 6.56 },
+          { name: 'PRD:KMS:KMS - Kaz USA', initialWmape: 13.37, postWmape: 11.53, initialBias: 21.74, postBias: 24.94 },
+          { name: 'PRD:KTN:KTN - Kaz Switzerland', initialWmape: 4.18, postWmape: 6.93, initialBias: 17.51, postBias: 18.15 },
+          { name: 'PRD:HOB:Helen of Troy – Olive Branch DC', initialWmape: 11.79, postWmape: 14.63, initialBias: -1.75, postBias: 9.30 },
+          { name: 'PRD:HFT:HFT-Hydro Flask Arlington.', initialWmape: 15.53, postWmape: 18.29, initialBias: 17.17, postBias: 13.61 },
+          { name: 'PRD:JUK:HOT (UK) Limited (JUK)', initialWmape: 21.31, postWmape: 29.86, initialBias: 37.70, postBias: 40.22 },
+          { name: 'PRD:COB:COB - Curlsmith Olive Branch', initialWmape: 217.50, postWmape: 33.34, initialBias: 15.54, postBias: 18.90 },
+          { name: 'PRD:JHM:JHM - Jiaxing Warehouse', initialWmape: 55.87, postWmape: 5.98, initialBias: -55.56, postBias: -46.55 },
+          { name: 'PRD:DOB:DOB - Drybar USA', initialWmape: 42.85, postWmape: 29.85, initialBias: -16.39, postBias: -9.86 },
+          { name: 'PRD:KCN:KCN - Kaz Metro Canada', initialWmape: 14.75, postWmape: 8.82, initialBias: -22.59, postBias: -16.67 },
+          { name: 'PRD:OOB:OOB - Osprey Olive Branch', initialWmape: 42.43, postWmape: 35.67, initialBias: -13.62, postBias: -15.78 },
+          { name: 'PRD:HMZ:HMZ - Helen of Troy Mexico - Zimag', initialWmape: 24.39, postWmape: 27.24, initialBias: 23.90, postBias: 30.13 },
+          { name: 'PRD:OKT:OKT - Osprey KTN', initialWmape: 52.36, postWmape: 52.26, initialBias: -87.01, postBias: -77.82 },
+          { name: 'PRD:HFC:HFC - Hydro Flask Metro Canada', initialWmape: 77.27, postWmape: 85.42, initialBias: -50.35, postBias: -52.68 },
+          { name: 'PRD:HCN:Helen of Troy L.P. (Texas L.P) Canada', initialWmape: 8.68, postWmape: 11.47, initialBias: 5.30, postBias: 6.68 },
+          { name: 'PRD:OGB:OGB - Osprey Great Bear', initialWmape: 28.25, postWmape: 37.78, initialBias: 5.53, postBias: 8.02 },
+          { name: 'PRD:KEC:KEC - Kaz Switzerland', initialWmape: 3.76, postWmape: 20.16, initialBias: -0.84, postBias: -5.77 },
+          { name: 'PRD:CMC:CMC - Curlsmith Metro Canada', initialWmape: 77.08, postWmape: 82.89, initialBias: 98.28, postBias: 98.37 },
+          { name: 'PRD:OMC:OMC - Osprey Metro Canada', initialWmape: 72.15, postWmape: 56.50, initialBias: -44.46, postBias: -27.73 },
+          { name: 'PRD:SZX:Helen of Troy SZX Warehouse', initialWmape: 0, postWmape: 0, initialBias: 0, postBias: 0 }
         ];
 
         const customerData = [
@@ -398,39 +475,180 @@
           { name: 'HO LA LOB', initialWmape: 91.92, postWmape: 110.58, initialBias: -220.53, postBias: -275.38 },
         ];
 
-        // --- FILTER STATE ---
-        let activeFilters = new Set(); 
-
-        // --- DYNAMIC CALCULATIONS ---
-        function clamp(val, min, max) {
-            return Math.min(Math.max(val, min), max);
-        }
-
-        // Global Accuracy
-        globalData.forEach(d => {
-            d.accuracy = clamp(Number((100 - d.wmape).toFixed(2)), 0, 100);
-        });
-        
-        [orgData, customerData, lobData].forEach(dataset => {
-            dataset.forEach(d => {
-                // Keep Bias between -100 and 100
-                d.initialBias = clamp(d.initialBias, -100, 100);
-                d.postBias = clamp(d.postBias, -100, 100);
-
-                // Calculate Accuracy (100 - WMAPE) and keep between 0 and 100
-                d.initialAccuracy = clamp(Number((100 - d.initialWmape).toFixed(2)), 0, 100);
-                d.postAccuracy = clamp(Number((100 - d.postWmape).toFixed(2)), 0, 100);
-            });
-        });
 
         // ==========================================
-        // FILTER DROPDOWN LOGIC
+        // CSV PARSING & DATA MERGING LOGIC
+        // ==========================================
+        
+        let dynamicOrgData = JSON.parse(JSON.stringify(orgData));
+        let dynamicCustomerData = JSON.parse(JSON.stringify(customerData));
+        let dynamicLobData = JSON.parse(JSON.stringify(lobData));
+
+        // Helper to safely parse a line of CSV including quotes and commas inside numbers
+        function parseCSVLine(line) {
+            let result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                let char = line[i];
+                if (char === '"' && line[i+1] === '"') {
+                    current += '"'; i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current); current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Extremely safe clean function (removed regex completely to prevent syntax errors)
+        const safeClean = (val) => val ? String(val).split('%').join('').split(',').join('').split('"').join('').trim() : '0';
+
+        function parseEntityCSV(csvString, baseDataArray) {
+            if (!csvString || !csvString.trim()) return baseDataArray;
+
+            const lines = csvString.trim().split('\n');
+            if (lines.length < 2) return baseDataArray;
+
+            const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+            
+            const entityIdx = 0;
+            const dateIdx = headers.findIndex(h => h.includes('date') || h.includes('month'));
+            const wmapeInitIdx = headers.findIndex(h => h === 'wmape initial');
+            const wmapePostIdx = headers.findIndex(h => h === 'wmape post tuning');
+            const overallInitIdx = headers.findIndex(h => h === 'overall wmape initial');
+            const overallPostIdx = headers.findIndex(h => h === 'overall wmape post tuning');
+
+            if (wmapeInitIdx === -1) return baseDataArray;
+
+            const map = new Map();
+            baseDataArray.forEach(d => { map.set(d.name, { ...d, hasCSVData: false }); });
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const cols = parseCSVLine(lines[i]);
+                
+                const entityName = cols[entityIdx] ? cols[entityIdx].trim() : '';
+                if (!entityName) continue;
+
+                const dateStr = safeClean(cols[dateIdx]);
+                const wInit = parseFloat(safeClean(cols[wmapeInitIdx]));
+                const wPost = parseFloat(safeClean(cols[wmapePostIdx]));
+                const oInit = parseFloat(safeClean(cols[overallInitIdx]));
+                const oPost = parseFloat(safeClean(cols[overallPostIdx]));
+
+                if (!map.has(entityName)) {
+                    map.set(entityName, { name: entityName, initialWmape: oInit, postWmape: oPost, initialBias: 0, postBias: 0, hasCSVData: true });
+                } else {
+                    const entry = map.get(entityName);
+                    if (!isNaN(oInit)) entry.initialWmape = oInit;
+                    if (!isNaN(oPost)) entry.postWmape = oPost;
+                    entry.hasCSVData = true;
+                }
+
+                const entry = map.get(entityName);
+                if (dateStr.startsWith('9/')) { entry.m9_initialWmape = wInit; entry.m9_postWmape = wPost; }
+                if (dateStr.startsWith('10/')) { entry.m10_initialWmape = wInit; entry.m10_postWmape = wPost; }
+                if (dateStr.startsWith('11/')) { entry.m11_initialWmape = wInit; entry.m11_postWmape = wPost; }
+            }
+
+            const result = [];
+            baseDataArray.forEach(d => {
+                if (map.has(d.name)) { result.push(map.get(d.name)); map.delete(d.name); }
+            });
+            map.forEach(value => result.push(value));
+            return result;
+        }
+
+        // ==========================================
+        // DYNAMIC CALCULATIONS & UPLOADER
+        // ==========================================
+        
+        function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
+
+        function recalculateDerivedMetrics() {
+            globalData.forEach(d => {
+                d.accuracy = clamp(Number((100 - d.wmape).toFixed(2)), 0, 100);
+            });
+            
+            [dynamicOrgData, dynamicCustomerData, dynamicLobData].forEach(dataset => {
+                dataset.forEach(d => {
+                    if(d.initialBias !== undefined) d.initialBias = clamp(d.initialBias, -100, 100);
+                    if(d.postBias !== undefined) d.postBias = clamp(d.postBias, -100, 100);
+
+                    d.initialAccuracy = clamp(Number((100 - d.initialWmape).toFixed(2)), 0, 100);
+                    d.postAccuracy = clamp(Number((100 - d.postWmape).toFixed(2)), 0, 100);
+
+                    // MOCK DATA GENERATOR (Provides placeholders until user uploads real CSV)
+                    if (d.m9_initialWmape === undefined) {
+                        let seed = d.name ? d.name.length : 1; 
+                        d.m9_initialWmape = clamp(d.initialWmape + (seed % 5) - 2, 0, 100);
+                        d.m9_postWmape = clamp(d.postWmape + (seed % 4) - 2, 0, 100);
+                        d.m10_initialWmape = clamp(d.initialWmape + ((seed*2) % 6) - 3, 0, 100);
+                        d.m10_postWmape = clamp(d.postWmape + ((seed*2) % 5) - 2, 0, 100);
+                        d.m11_initialWmape = clamp(d.initialWmape + ((seed*3) % 7) - 3, 0, 100);
+                        d.m11_postWmape = clamp(d.postWmape + ((seed*3) % 6) - 3, 0, 100);
+                    }
+
+                    d.m9_initialAccuracy = clamp(Number((100 - d.m9_initialWmape).toFixed(2)), 0, 100);
+                    d.m9_postAccuracy = clamp(Number((100 - d.m9_postWmape).toFixed(2)), 0, 100);
+                    d.m10_initialAccuracy = clamp(Number((100 - d.m10_initialWmape).toFixed(2)), 0, 100);
+                    d.m10_postAccuracy = clamp(Number((100 - d.m10_postWmape).toFixed(2)), 0, 100);
+                    d.m11_initialAccuracy = clamp(Number((100 - d.m11_initialWmape).toFixed(2)), 0, 100);
+                    d.m11_postAccuracy = clamp(Number((100 - d.m11_postWmape).toFixed(2)), 0, 100);
+                });
+            });
+        }
+
+        // Upload Button Logic
+        document.getElementById('csvUploadBtn').addEventListener('click', () => {
+            document.getElementById('csvUpload').click();
+        });
+
+        document.getElementById('csvUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                dynamicOrgData = parseEntityCSV(text, dynamicOrgData);
+                dynamicCustomerData = parseEntityCSV(text, dynamicCustomerData);
+                dynamicLobData = parseEntityCSV(text, dynamicLobData);
+                
+                recalculateDerivedMetrics();
+                
+                populateFilterDropdown(document.getElementById('categorySelect').value);
+                populateMonthlyFilterDropdown(document.getElementById('monthlyCategorySelect').value);
+                
+                updateBarChart();
+                updateMonthlyChart();
+                
+                alert("Data successfully updated from CSV!");
+            };
+            reader.readAsText(file);
+            e.target.value = ''; // Reset input
+        });
+
+        // Initialize calculations once at start
+        recalculateDerivedMetrics();
+
+
+        // --- FILTER STATES ---
+        let activeFilters = new Set(); 
+        let monthlyActiveFilters = new Set();
+
+        // ==========================================
+        // TAB 1: ENTITY BREAKDOWN LOGIC
         // ==========================================
         function populateFilterDropdown(category) {
             let data = [];
-            if (category === 'lob') data = lobData;
-            if (category === 'customer') data = customerData;
-            if (category === 'org') data = orgData;
+            if (category === 'lob') data = dynamicLobData;
+            if (category === 'customer') data = dynamicCustomerData;
+            if (category === 'org') data = dynamicOrgData;
 
             const dropdown = document.getElementById('entityFilterDropdown');
             dropdown.innerHTML = '';
@@ -457,16 +675,57 @@
             });
         }
 
-        // Toggle Filter Dropdown
         document.getElementById('entityFilterBtn').addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('entityFilterDropdown').classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
+        // ==========================================
+        // TAB 3: MONTHLY BREAKDOWN LOGIC
+        // ==========================================
+        function populateMonthlyFilterDropdown(category) {
+            let data = [];
+            if (category === 'lob') data = dynamicLobData;
+            if (category === 'customer') data = dynamicCustomerData;
+            if (category === 'org') data = dynamicOrgData;
+
+            const dropdown = document.getElementById('monthlyFilterDropdown');
+            dropdown.innerHTML = '';
+            monthlyActiveFilters.clear();
+
+            data.forEach((d, index) => {
+                monthlyActiveFilters.add(d.name); 
+
+                const div = document.createElement('div');
+                div.className = 'flex items-center p-2 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors';
+                div.innerHTML = `
+                    <input type="checkbox" id="m-filter-${index}" value="${d.name}" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                    <label for="m-filter-${index}" class="ml-2.5 text-sm font-medium text-slate-700 cursor-pointer w-full truncate" title="${d.name}">${d.name}</label>
+                `;
+                
+                const checkbox = div.querySelector('input');
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) monthlyActiveFilters.add(e.target.value);
+                    else monthlyActiveFilters.delete(e.target.value);
+                    updateMonthlyChart();
+                });
+                
+                dropdown.appendChild(div);
+            });
+        }
+
+        document.getElementById('monthlyFilterBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('monthlyFilterDropdown').classList.toggle('hidden');
+        });
+
+        // Close dropdowns when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#entityFilterContainer')) {
                 document.getElementById('entityFilterDropdown').classList.add('hidden');
+            }
+            if (!e.target.closest('#monthlyFilterContainer')) {
+                document.getElementById('monthlyFilterDropdown').classList.add('hidden');
             }
         });
 
@@ -474,21 +733,20 @@
         // TAB SWITCHING LOGIC
         // ==========================================
         function switchTab(tabId) {
-            // Update Buttons
-            document.getElementById('tabBtn-entity').className = "px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50";
-            document.getElementById('tabBtn-global').className = "px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50";
+            // Reset all tabs
+            ['entity', 'global', 'monthly'].forEach(id => {
+                document.getElementById('tabBtn-' + id).className = "px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50";
+                document.getElementById('tabContent-' + id).classList.add('hidden');
+            });
             
+            // Set Active Tab
             document.getElementById('tabBtn-' + tabId).className = "px-5 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 bg-white text-indigo-700 shadow-sm border border-slate-200/60";
-            
-            // Hide all content, show active
-            document.getElementById('tabContent-entity').classList.add('hidden');
-            document.getElementById('tabContent-global').classList.add('hidden');
-            
             document.getElementById('tabContent-' + tabId).classList.remove('hidden');
 
-            // Render Chart for active tab to ensure correct dimensions
+            // Render Charts
             if (tabId === 'entity') updateBarChart();
             if (tabId === 'global') updateLineChart();
+            if (tabId === 'monthly') updateMonthlyChart();
         }
 
         // ==========================================
@@ -496,15 +754,17 @@
         // ==========================================
         let barChartInstance = null;
         let lineChartInstance = null;
+        let monthlyChartInstance = null;
 
         Chart.defaults.font.family = "'Inter', sans-serif";
         Chart.defaults.color = '#64748b';
 
+        // --- 1. Tab 1 Bar Chart (Entity Breakdown) ---
         function getActiveBarData(category) {
             let data = [];
-            if (category === 'lob') data = lobData;
-            if (category === 'customer') data = customerData;
-            if (category === 'org') data = orgData;
+            if (category === 'lob') data = dynamicLobData;
+            if (category === 'customer') data = dynamicCustomerData;
+            if (category === 'org') data = dynamicOrgData;
 
             let copy = JSON.parse(JSON.stringify(data));
             return copy.filter(d => activeFilters.has(d.name));
@@ -516,7 +776,6 @@
             const showLabels = document.getElementById('toggleLabels').checked;
             
             const data = getActiveBarData(category);
-
             const labels = data.map(d => d.name);
             let datasets = [];
 
@@ -547,17 +806,10 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: {
-                        padding: { right: showLabels ? 40 : 0 } 
-                    },
+                    layout: { padding: { right: showLabels ? 40 : 0 } },
                     plugins: {
                         datalabels: { 
-                            display: showLabels,
-                            align: 'right',
-                            anchor: 'end',
-                            formatter: (val) => val + '%',
-                            font: { weight: 'bold', size: 11 },
-                            color: '#475569'
+                            display: showLabels, align: 'right', anchor: 'end', formatter: (val) => val + '%', font: { weight: 'bold', size: 11 }, color: '#475569'
                         },
                         legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { weight: '600' } } },
                         tooltip: { backgroundColor: '#1e293b', titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' }, padding: 12, cornerRadius: 8 }
@@ -570,7 +822,7 @@
             });
         }
 
-        // --- 2. Line Chart (Global Progression) ---
+        // --- 2. Tab 2 Line Chart (Global Progression) ---
         function updateLineChart() {
             const labels = globalData.map(d => d.stage);
             const wmapeData = globalData.map(d => d.wmape);
@@ -590,39 +842,24 @@
                             data: wmapeData,
                             borderColor: '#4f46e5',
                             backgroundColor: '#4f46e5',
-                            borderWidth: 3,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            pointBackgroundColor: '#fff',
-                            pointBorderWidth: 2,
-                            yAxisID: 'yWmape',
-                            tension: 0.3
+                            borderWidth: 3, pointRadius: 6, pointHoverRadius: 8, pointBackgroundColor: '#fff', pointBorderWidth: 2,
+                            yAxisID: 'yWmape', tension: 0.3
                         },
                         {
                             label: 'Accuracy (%)',
                             data: accuracyData,
                             borderColor: '#0ea5e9',
                             backgroundColor: '#0ea5e9',
-                            borderWidth: 3,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            pointBackgroundColor: '#fff',
-                            pointBorderWidth: 2,
-                            yAxisID: 'yAccuracy',
-                            tension: 0.3
+                            borderWidth: 3, pointRadius: 6, pointHoverRadius: 8, pointBackgroundColor: '#fff', pointBorderWidth: 2,
+                            yAxisID: 'yAccuracy', tension: 0.3
                         },
                         {
                             label: 'Bias (%)',
                             data: biasData,
                             borderColor: '#10b981',
                             backgroundColor: '#10b981',
-                            borderWidth: 3,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            pointBackgroundColor: '#fff',
-                            pointBorderWidth: 2,
-                            yAxisID: 'yBias',
-                            tension: 0.3
+                            borderWidth: 3, pointRadius: 6, pointHoverRadius: 8, pointBackgroundColor: '#fff', pointBorderWidth: 2,
+                            yAxisID: 'yBias', tension: 0.3
                         }
                     ]
                 },
@@ -636,11 +873,7 @@
                         datalabels: {
                             font: { weight: 'bold', size: 12 },
                             formatter: function(value) { return value.toFixed(2) + '%'; },
-                            align: function(context) { 
-                                // Position WMAPE labels above the dot, and Accuracy/Bias labels below to prevent overlap
-                                if(context.datasetIndex === 0) return 'top';
-                                return 'bottom';
-                            },
+                            align: function(context) { return context.datasetIndex === 0 ? 'top' : 'bottom'; },
                             offset: 6,
                             color: function(context) { return context.dataset.borderColor; }
                         }
@@ -650,39 +883,114 @@
                         yWmape: {
                             type: 'linear', display: true, position: 'left',
                             title: { display: true, text: 'WMAPE', font: { weight: 'bold' }, color: '#4f46e5' },
-                            grid: { color: '#f1f5f9' },
-                            suggestedMin: 58, suggestedMax: 68
+                            grid: { color: '#f1f5f9' }, suggestedMin: 58, suggestedMax: 68
                         },
                         yAccuracy: {
                             type: 'linear', display: true, position: 'left',
                             title: { display: true, text: 'Accuracy', font: { weight: 'bold' }, color: '#0ea5e9' },
-                            grid: { drawOnChartArea: false },
-                            suggestedMin: 32, suggestedMax: 42
+                            grid: { drawOnChartArea: false }, suggestedMin: 32, suggestedMax: 42
                         },
                         yBias: {
                             type: 'linear', display: true, position: 'right',
                             title: { display: true, text: 'Bias', font: { weight: 'bold' }, color: '#10b981' },
-                            grid: { drawOnChartArea: false },
-                            suggestedMin: -25, suggestedMax: 0
+                            grid: { drawOnChartArea: false }, suggestedMin: -25, suggestedMax: 0
                         }
                     }
                 }
             });
         }
 
-        // Initialize on load
+        // --- 3. Tab 3 Monthly Chart ---
+        function getActiveMonthlyData(category) {
+            let data = [];
+            if (category === 'lob') data = dynamicLobData;
+            if (category === 'customer') data = dynamicCustomerData;
+            if (category === 'org') data = dynamicOrgData;
+
+            let copy = JSON.parse(JSON.stringify(data));
+            return copy.filter(d => monthlyActiveFilters.has(d.name));
+        }
+
+        function updateMonthlyChart() {
+            const category = document.getElementById('monthlyCategorySelect').value;
+            const metric = document.getElementById('monthlyMetricSelect').value;
+            const timePeriod = document.getElementById('monthlyTimePeriodSelect').value;
+            const showLabels = document.getElementById('monthlyToggleLabels').checked;
+            
+            const data = getActiveMonthlyData(category);
+            const labels = data.map(d => d.name);
+            let datasets = [];
+
+            // Determine appropriate keys depending on Time Period and Metric
+            let initKey, postKey;
+            
+            if (timePeriod === 'overall') {
+                initKey = metric === 'wmape' ? 'initialWmape' : 'initialAccuracy';
+                postKey = metric === 'wmape' ? 'postWmape' : 'postAccuracy';
+            } else {
+                initKey = `${timePeriod}_initial${metric === 'wmape' ? 'Wmape' : 'Accuracy'}`;
+                postKey = `${timePeriod}_post${metric === 'wmape' ? 'Wmape' : 'Accuracy'}`;
+            }
+
+            const initialLabel = `Initial ${metric === 'wmape' ? 'WMAPE' : 'Accuracy'} (%)`;
+            const postLabel = `Post Tuning ${metric === 'wmape' ? 'WMAPE' : 'Accuracy'} (%)`;
+            const postColor = metric === 'wmape' ? '#4f46e5' : '#0ea5e9';
+
+            datasets = [
+                { label: initialLabel, data: data.map(d => d[initKey]), backgroundColor: '#cbd5e1', borderRadius: 6, barPercentage: 0.8 },
+                { label: postLabel, data: data.map(d => d[postKey]), backgroundColor: postColor, borderRadius: 6, barPercentage: 0.8 }
+            ];
+
+            if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+            const ctx = document.getElementById('monthlyBarChart').getContext('2d');
+            monthlyChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { right: showLabels ? 40 : 0 } },
+                    plugins: {
+                        datalabels: { 
+                            display: showLabels, align: 'right', anchor: 'end', formatter: (val) => val + '%', font: { weight: 'bold', size: 11 }, color: '#475569'
+                        },
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { weight: '600' } } },
+                        tooltip: { backgroundColor: '#1e293b', titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' }, padding: 12, cornerRadius: 8 }
+                    },
+                    scales: {
+                        x: { grid: { color: '#f1f5f9' }, ticks: { font: { weight: '500' } } },
+                        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' }, color: '#334155' } }
+                    }
+                }
+            });
+        }
+
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
+            // Init Tab 1
             populateFilterDropdown(document.getElementById('categorySelect').value);
             updateBarChart();
+
+            // Init Tab 3
+            populateMonthlyFilterDropdown(document.getElementById('monthlyCategorySelect').value);
+            // Don't render monthly chart here yet, it renders upon tab switch to prevent sizing issues
         });
 
-        // Event Listeners for Bar Chart filters
-        document.getElementById('categorySelect').addEventListener('change', (e) => {
-            populateFilterDropdown(e.target.value);
-            updateBarChart();
-        });
+        // Tab 1 Event Listeners
+        document.getElementById('categorySelect').addEventListener('change', (e) => { populateFilterDropdown(e.target.value); updateBarChart(); });
         document.getElementById('metricSelect').addEventListener('change', updateBarChart);
         document.getElementById('toggleLabels').addEventListener('change', updateBarChart);
+
+        // Tab 3 Event Listeners
+        document.getElementById('monthlyCategorySelect').addEventListener('change', (e) => { populateMonthlyFilterDropdown(e.target.value); updateMonthlyChart(); });
+        document.getElementById('monthlyMetricSelect').addEventListener('change', updateMonthlyChart);
+        document.getElementById('monthlyTimePeriodSelect').addEventListener('change', updateMonthlyChart);
+        document.getElementById('monthlyToggleLabels').addEventListener('change', updateMonthlyChart);
 
     </script>
 </body>
